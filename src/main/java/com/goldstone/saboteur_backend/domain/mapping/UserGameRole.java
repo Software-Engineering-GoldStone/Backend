@@ -3,21 +3,17 @@ package com.goldstone.saboteur_backend.domain.mapping;
 import com.goldstone.saboteur_backend.domain.GameRoom;
 import com.goldstone.saboteur_backend.domain.User;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
+import com.goldstone.saboteur_backend.domain.enums.GameRole;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Entity
 @Getter
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class UserGameRoom extends BaseEntity {
+public class UserGameRole extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,13 +23,24 @@ public class UserGameRoom extends BaseEntity {
     private GameRoom gameRoom;
 
     @ManyToOne
+    @JoinColumn(name = "user_game_room_id")
+    private UserGameRoom userGameRoom;
+
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "userGameRoom")
-    private List<UserGameRole> userGameRoles;
+    private Integer round;
 
-    // private Boolean isReady = false;
+    @Enumerated(EnumType.STRING)
+    private GameRole role;
 
-    @CreatedDate private LocalDateTime joinedAt = LocalDateTime.now();
+    public UserGameRole(
+            GameRoom gameRoom, UserGameRoom userGameRoom, User user, GameRole role, Integer round) {
+        this.gameRoom = gameRoom;
+        this.userGameRoom = userGameRoom;
+        this.user = user;
+        this.role = role;
+        this.round = round;
+    }
 }

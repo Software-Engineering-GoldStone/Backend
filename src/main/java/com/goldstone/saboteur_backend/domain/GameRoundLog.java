@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +32,10 @@ public class GameRoundLog extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long gameId;
+    @ManyToOne
+    @JoinColumn(name = "game_room_id")
+    private GameRoom gameRoom;
+
     private Long roundId;
 
     private LocalDateTime roundStartDate;
@@ -55,7 +57,7 @@ public class GameRoundLog extends BaseEntity {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         Map<String, Object> logMap = new HashMap<>();
-        logMap.put("gameId", gameId);
+        logMap.put("gameId", gameRoom.getId());
         logMap.put("roundId", roundId);
         logMap.put("roundStartDate", roundStartDate);
         logMap.put("roundEndDate", roundEndDate);

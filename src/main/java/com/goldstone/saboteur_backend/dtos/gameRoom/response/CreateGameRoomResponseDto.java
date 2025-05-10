@@ -14,7 +14,7 @@ public class CreateGameRoomResponseDto {
     public static CreateGameRoomResponseDto from(GameRoom gameRoom) {
         return CreateGameRoomResponseDto.builder()
                 .id(gameRoom.getId().toString())
-                .masterPlayer(UserInfoResponseDto.from(gameRoom.getMaster()))
+                .masterPlayer(UserInfoResponseDto.from(gameRoom.getSetting().getHost()))
                 .build();
     }
 }

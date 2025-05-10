@@ -2,16 +2,11 @@ package com.goldstone.saboteur_backend.domain;
 
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import com.goldstone.saboteur_backend.domain.enums.UserStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.goldstone.saboteur_backend.domain.mapping.UserGameLog;
+import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
+import jakarta.persistence.*;
 import java.time.LocalDate;
-
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,17 +29,13 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status = UserStatus.ACTIVATED;
 
-    @ManyToOne
-    @JoinColumn(name = "game_log_id")
-    private GameLog gameLog;
+    @OneToMany(mappedBy = "user")
+    private List<UserGameLog> userGameLogs;
 
-    @ManyToOne
-    @JoinColumn(name = "game_room_id")
-    private GameRoom gameRoom;
+    @OneToMany(mappedBy = "user")
+    private List<UserGameRoom> userGameRooms;
 
-    @ManyToOne
-    @JoinColumn(name = "game_card_assignment_id")
-    private GameCardAssignment gameCardAssignment;
+    @Transient private UserCardDeck cardDeck;
 
     public User(String nickname, LocalDate birthDate) {
         this.nickname = nickname;

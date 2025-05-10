@@ -1,8 +1,5 @@
 package com.goldstone.saboteur_backend.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
@@ -15,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +28,7 @@ public class GameRoundUserLog extends BaseEntity {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "round_log_id")
+    @JoinColumn(name = "game_round_log_id")
     private GameRoundLog roundLog;
 
     @ManyToOne(optional = false)

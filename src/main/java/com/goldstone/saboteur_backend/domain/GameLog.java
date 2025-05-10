@@ -5,19 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
-import com.goldstone.saboteur_backend.domain.mapping.GameUserLog;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import com.goldstone.saboteur_backend.domain.mapping.UserGameLog;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,10 +25,9 @@ public class GameLog extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long gameId;
-
-    @OneToMany(mappedBy = "gameLog")
-    private List<User> users;
+    @OneToOne
+    @JoinColumn(name = "game_room_id")
+    private GameRoom gameRoom;
 
     private LocalDateTime startDate;
 
@@ -44,16 +36,19 @@ public class GameLog extends BaseEntity {
     @OneToMany(mappedBy = "gameLog")
     private List<GameRoundLog> roundLogs;
 
+    @OneToMany(mappedBy = "gameLog")
+    private List<UserGameLog> userGameLogs;
+
     public String createWholeRawLog() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         Map<String, Object> logMap = new HashMap<>();
-        logMap.put("gameId", gameId);
+        logMap.put("gameId", gameRoom.getId());
         logMap.put("startDate", startDate);
         logMap.put("endDate", endDate);
-        logMap.put("users", users);
+        logMap.put("users", userGameLogs);
         logMap.put("roundLogs", roundLogs);
         try {
             return mapper.writeValueAsString(logMap);
@@ -68,7 +63,7 @@ public class GameLog extends BaseEntity {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         Map<String, Object> logMap = new HashMap<>();
-        logMap.put("gameId", gameId);
+        logMap.put("gameId", gameRoom.getId());
         logMap.put("startDate", startDate);
         logMap.put("endDate", endDate);
         try {

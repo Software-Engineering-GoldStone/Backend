@@ -1,12 +1,7 @@
 package com.goldstone.saboteur_backend.domain;
 
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +17,10 @@ public class GameResult extends BaseEntity {
     private Long id;
 
     private Double totalPlayTime;
+
+    @OneToOne
+    @JoinColumn(name = "game_room_id")
+    private GameRoom gameRoom;
 
     @OneToMany(mappedBy = "gameResult")
     private List<UserRank> userRank;

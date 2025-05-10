@@ -1,8 +1,6 @@
 package com.goldstone.saboteur_backend.exception.responseDto;
 
-import com.goldstone.saboteur_backend.exception.code.error.CommonErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.ErrorCode;
-
 import java.util.List;
 import lombok.Getter;
 

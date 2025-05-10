@@ -1,14 +1,20 @@
 package com.goldstone.saboteur_backend.domain.card;
 
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GoldCard extends GoalCard {
+public class GoldCard extends Card {
     private Integer amount;
+
+    @Override
+    public void use() {}
+
+    @Override
+    public boolean availableUse() {
+        return false;
+    }
 }
