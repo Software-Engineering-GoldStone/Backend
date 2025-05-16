@@ -1,4 +1,4 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.game;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

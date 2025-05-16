@@ -1,5 +1,6 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.game;
 
+import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.enums.GameRole;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRole;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;

@@ -1,4 +1,4 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.user;
 
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import com.goldstone.saboteur_backend.domain.enums.UserLoginType;

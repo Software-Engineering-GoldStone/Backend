@@ -1,6 +1,7 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.game;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import com.goldstone.saboteur_backend.domain.enums.GameRoomStatus;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRole;

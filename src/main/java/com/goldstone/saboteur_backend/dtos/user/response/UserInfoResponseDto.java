@@ -1,6 +1,6 @@
 package com.goldstone.saboteur_backend.dtos.user.response;
 
-import com.goldstone.saboteur_backend.domain.User;
+import com.goldstone.saboteur_backend.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 

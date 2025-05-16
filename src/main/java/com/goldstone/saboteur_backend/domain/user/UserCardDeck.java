@@ -1,4 +1,4 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.user;
 
 import com.goldstone.saboteur_backend.domain.card.Card;
 import java.util.List;
@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameCardAssignment {
-    private List<User> users;
+public class UserCardDeck {
+    private User user;
 
-    private List<Card> shuffledCardQueue;
+    private List<Card> cards;
 
-    // shuffleCards()
-
-    // assignCards()
+    public boolean hasCard(Card card) {
+        return cards.contains(card);
+    }
 }

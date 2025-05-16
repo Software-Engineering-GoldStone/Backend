@@ -25,4 +25,5 @@ public class ActionCard extends Card {
     // destroyTool
     // fallingRock
     // peekDestinationCard
+
 }

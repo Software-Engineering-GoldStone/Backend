@@ -1,5 +1,6 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.game;
 
+import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

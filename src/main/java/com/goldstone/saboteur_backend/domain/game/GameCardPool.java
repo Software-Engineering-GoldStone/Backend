@@ -1,4 +1,4 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.game;
 
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.exception.BusinessException;

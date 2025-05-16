@@ -1,6 +1,7 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.user;
 
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
+import com.goldstone.saboteur_backend.domain.game.GameResult;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

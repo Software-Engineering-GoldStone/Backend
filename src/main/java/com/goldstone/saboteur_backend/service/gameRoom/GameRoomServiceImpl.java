@@ -1,8 +1,8 @@
 package com.goldstone.saboteur_backend.service.gameRoom;
 
 import com.corundumstudio.socketio.SocketIOClient;
-import com.goldstone.saboteur_backend.domain.GameRoom;
-import com.goldstone.saboteur_backend.domain.User;
+import com.goldstone.saboteur_backend.domain.game.GameRoom;
+import com.goldstone.saboteur_backend.domain.user.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +14,6 @@ public class GameRoomServiceImpl implements GameRoomService {
             if (gameRoom.getPlayers().size() >= gameRoom.getSetting().getMaxPlayers()) {
                 throw new Exception("Max player reached");
             }
-
             gameRoom.getPlayers().add(user);
             client.joinRoom(gameRoom.getId().toString());
         } catch (Exception e) {

@@ -1,5 +1,6 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.chat;
 
+import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;

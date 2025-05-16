@@ -1,7 +1,7 @@
 package com.goldstone.saboteur_backend.domain.mapping;
 
-import com.goldstone.saboteur_backend.domain.GameLog;
-import com.goldstone.saboteur_backend.domain.User;
+import com.goldstone.saboteur_backend.domain.game.GameLog;
+import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

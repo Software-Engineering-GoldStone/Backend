@@ -1,7 +1,7 @@
 package com.goldstone.saboteur_backend.domain.mapping;
 
-import com.goldstone.saboteur_backend.domain.GameRoom;
-import com.goldstone.saboteur_backend.domain.User;
+import com.goldstone.saboteur_backend.domain.game.GameRoom;
+import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
