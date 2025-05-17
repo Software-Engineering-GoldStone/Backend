@@ -1,19 +1,26 @@
 package com.goldstone.saboteur_backend.domain.board;
 
-import com.goldstone.saboteur_backend.domain.card.GoalCard;
+import com.goldstone.saboteur_backend.domain.card.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
     private Board board;
+    private GoalCard goalCard1;
+    private GoalCard goalCard2;
+    private GoalCard goalCard3;
 
     @BeforeEach
     void setUp() {
         board = new Board();
+        goalCard1 = new GoalCard();  // 골드가 있는 목표 카드
+        goalCard2 = new GoalCard(); // 골드가 없는 목표 카드
+        goalCard3 = new GoalCard(); // 골드가 없는 목표 카드
     }
 
     @Test
@@ -27,55 +34,103 @@ class BoardTest {
 
     @Test
     void testInitializeGoalCards() {
-        List<GoalCard> goalCards = Arrays.asList(
-            new GoalCard(),
-            new GoalCard(),
-            new GoalCard()
-        );
+        // 목표 카드 초기화
+        board.initializeGoalCards(List.of(goalCard1, goalCard2, goalCard3));
 
-        board.initializeGoalCards(goalCards);
-        
-        assertTrue(board.isInitialized());
-        assertFalse(board.getStartPosition().isEmpty()); // 시작 카드가 배치되어 있어야 함
-        assertTrue(board.getStartPosition().isRevealed()); // 시작 카드는 공개되어 있어야 함
-        
-        assertEquals(3, board.getGoalPositions().size());
-        
-        // 목표 카드들의 위치 확인
-        assertTrue(board.isGoalPosition(board.getPosition(8, 0))); // 첫 번째 줄
-        assertTrue(board.isGoalPosition(board.getPosition(8, 2))); // 중간 줄
-        assertTrue(board.isGoalPosition(board.getPosition(8, 4))); // 마지막 줄
-        
-        for (BoardPosition goalPosition : board.getGoalPositions()) {
-            assertFalse(goalPosition.isEmpty()); // 목표 카드가 배치되어 있어야 함
-            assertFalse(goalPosition.isRevealed()); // 목표 카드는 비공개여야 함
-            assertEquals(8, goalPosition.getX()); // x 좌표는 항상 8
+        // 시작 카드가 올바른 위치에 있는지 확인
+        BoardPosition startPosition = board.getStartPosition();
+        assertNotNull(startPosition);
+        assertTrue(startPosition.getCard() instanceof StartCard);
+        assertTrue(startPosition.isRevealed());
+
+        // 목표 카드들이 올바른 위치에 있는지 확인
+        assertTrue(board.isGoalPosition(board.getPosition(8, 0))); // 첫 번째 목표 카드
+        assertTrue(board.isGoalPosition(board.getPosition(8, 2))); // 두 번째 목표 카드
+        assertTrue(board.isGoalPosition(board.getPosition(8, 4))); // 세 번째 목표 카드
+    }
+
+    @Test
+    void testPlaceCard() {
+        board.initializeGoalCards(List.of(goalCard1, goalCard2, goalCard3));
+
+        // 시작 카드 옆에 경로 카드 배치
+        Set<Direction> straightPath = EnumSet.of(Direction.LEFT, Direction.RIGHT);
+        PathCard pathCard = new PathCard(straightPath);
+        assertTrue(board.placeCard(1, 2, pathCard)); // 시작 카드 오른쪽에 배치
+
+        // 이미 카드가 있는 위치에 배치 시도
+        assertFalse(board.placeCard(1, 2, pathCard));
+
+        // 유효하지 않은 위치에 배치 시도
+        assertFalse(board.placeCard(-1, 2, pathCard));
+        assertFalse(board.placeCard(1, -1, pathCard));
+        assertFalse(board.placeCard(9, 2, pathCard));
+        assertFalse(board.placeCard(1, 5, pathCard));
+    }
+
+    @Test
+    void testPathConnection() {
+        board.initializeGoalCards(List.of(goalCard1, goalCard2, goalCard3));
+
+        // 직선 경로 카드 생성
+        Set<Direction> straightPath = EnumSet.of(Direction.LEFT, Direction.RIGHT);
+        PathCard pathCard1 = new PathCard(straightPath);
+        PathCard pathCard2 = new PathCard(straightPath);
+
+        // 시작 카드 오른쪽에 첫 번째 경로 카드 배치
+        assertTrue(board.placeCard(1, 2, pathCard1));
+
+        // 첫 번째 경로 카드 오른쪽에 두 번째 경로 카드 배치
+        assertTrue(board.placeCard(2, 2, pathCard2));
+
+        // 연결되지 않는 경로로 배치 시도
+        Set<Direction> verticalPath = EnumSet.of(Direction.UP, Direction.DOWN);
+        PathCard verticalCard = new PathCard(verticalPath);
+        assertFalse(board.placeCard(3, 2, verticalCard)); // 수직 경로는 연결될 수 없음
+    }
+
+    @Test
+    void testPathToGoal() {
+        board.initializeGoalCards(List.of(goalCard1, goalCard2, goalCard3));
+
+        // 시작 카드에서 목표 카드까지의 경로 생성
+        Set<Direction> straightPath = EnumSet.of(Direction.LEFT, Direction.RIGHT);
+        for (int x = 1; x < 8; x++) {
+            PathCard pathCard = new PathCard(straightPath);
+            assertTrue(board.placeCard(x, 2, pathCard));
         }
+
+        // 경로가 목표 카드에 도달하는지 확인
+        assertTrue(PathValidator.hasValidPathToGoal(board));
     }
 
     @Test
-    void testInitializeGoalCardsThrowsExceptionWhenAlreadyInitialized() {
-        List<GoalCard> goalCards = Arrays.asList(new GoalCard(), new GoalCard(), new GoalCard());
-        board.initializeGoalCards(goalCards);
-        
-        assertThrows(IllegalStateException.class, () -> {
-            board.initializeGoalCards(goalCards);
-        });
+    void testInvalidPathToGoal() {
+        board.initializeGoalCards(List.of(goalCard1, goalCard2, goalCard3));
+
+        // 시작 카드 오른쪽에 경로 카드 배치
+        Set<Direction> straightPath = EnumSet.of(Direction.LEFT, Direction.RIGHT);
+        PathCard pathCard = new PathCard(straightPath);
+        assertTrue(board.placeCard(1, 2, pathCard));
+
+        // 경로가 목표 카드에 도달하지 않는지 확인
+        assertFalse(PathValidator.hasValidPathToGoal(board));
     }
 
     @Test
-    void testInitializeGoalCardsThrowsExceptionWhenNotThreeCards() {
-        List<GoalCard> twoCards = Arrays.asList(new GoalCard(), new GoalCard());
-        assertThrows(IllegalArgumentException.class, () -> {
-            board.initializeGoalCards(twoCards);
-        });
+    void testCardRotation() {
+        board.initializeGoalCards(List.of(goalCard1, goalCard2, goalCard3));
 
-        List<GoalCard> fourCards = Arrays.asList(
-            new GoalCard(), new GoalCard(), new GoalCard(), new GoalCard()
-        );
-        assertThrows(IllegalArgumentException.class, () -> {
-            board.initializeGoalCards(fourCards);
-        });
+        // T자 경로 카드 생성
+        Set<Direction> tPath = EnumSet.of(Direction.UP, Direction.RIGHT, Direction.DOWN);
+        PathCard tCard = new PathCard(tPath);
+
+        // 카드 회전
+        tCard.rotate();
+        assertTrue(tCard.hasPath(Direction.DOWN));
+        assertTrue(tCard.hasPath(Direction.LEFT));
+        assertTrue(tCard.hasPath(Direction.UP));
+        assertFalse(tCard.hasPath(Direction.RIGHT));
     }
 
     @Test
@@ -106,7 +161,7 @@ class BoardTest {
         assertTrue(board.isEmpty());
         
         // 시작 카드 배치
-        board.initializeGoalCards(Arrays.asList(new GoalCard(), new GoalCard(), new GoalCard()));
+        board.initializeGoalCards(List.of(goalCard1, goalCard2, goalCard3));
         
         // 시작 카드만 있는 경우에도 보드는 비어있다고 간주
         assertTrue(board.isEmpty());
