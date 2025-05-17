@@ -1,7 +1,19 @@
 package com.goldstone.saboteur_backend.domain.card;
 
-public abstract class Card {
-    abstract void use();
+import java.util.Set;
 
-    abstract boolean availableUse();
+import lombok.Getter;
+
+@Getter
+public abstract class Card {
+
+    protected final Set<Direction> paths;
+    
+    protected Card(Set<Direction> paths) {
+        this.paths = paths;
+    }
+    
+    public abstract boolean hasPath(Direction direction);
+    
+    public abstract boolean canConnectTo(Card otherCard, Direction direction);
 }
