@@ -2,7 +2,8 @@ package com.goldstone.saboteur_backend.domain;
 
 import com.goldstone.saboteur_backend.domain.card.*;
 import com.goldstone.saboteur_backend.domain.enums.GameRole;
-import com.goldstone.saboteur_backend.domain.enums.GoalCardType;
+import com.goldstone.saboteur_backend.domain.card.CardDeck;
+
 
 import java.util.*;
 

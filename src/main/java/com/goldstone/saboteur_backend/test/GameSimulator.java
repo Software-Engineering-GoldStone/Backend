@@ -3,7 +3,6 @@ package com.goldstone.saboteur_backend.test;
 import com.goldstone.saboteur_backend.domain.*;
 import com.goldstone.saboteur_backend.domain.card.*;
 import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
-import com.goldstone.saboteur_backend.domain.enums.GameRole;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -15,11 +14,10 @@ import java.util.*;
 public class GameSimulator implements CommandLineRunner, Game.GameStateChangeListener {
 
     private static final int PLAYER_COUNT = 5;
-    private Random random = new Random();
-    private long seed;
+    private final Random random = new Random();
 
     public GameSimulator() {
-        seed = System.currentTimeMillis();
+        long seed = System.currentTimeMillis();
         random.setSeed(seed);
         System.out.println("랜덤 시드: " + seed);
     }
@@ -30,7 +28,7 @@ public class GameSimulator implements CommandLineRunner, Game.GameStateChangeLis
         Game game = new Game();
         game.addListener(this);
 
-        List<Player> players = createPlayers(PLAYER_COUNT);
+        List<Player> players = createPlayers();
         players.forEach(game::addPlayer);
 
         System.out.println("플레이어 " + PLAYER_COUNT + "명이 게임에 참가했습니다.");
@@ -44,14 +42,14 @@ public class GameSimulator implements CommandLineRunner, Game.GameStateChangeLis
                 break;
             }
             simulateTurn(game);
-            sleep(500);
+            sleep();
         }
         printGameResults(game);
     }
 
-    private List<Player> createPlayers(int count) {
+    private List<Player> createPlayers() {
         List<Player> players = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < GameSimulator.PLAYER_COUNT; i++) {
             players.add(new Player("Player " + (i + 1)));
         }
         return players;
@@ -247,8 +245,8 @@ public class GameSimulator implements CommandLineRunner, Game.GameStateChangeLis
         });
     }
 
-    private void sleep(int millis) {
-        try { Thread.sleep(millis); }
+    private void sleep() {
+        try { Thread.sleep(500); }
         catch (InterruptedException e) { Thread.currentThread().interrupt(); }
     }
 
@@ -263,12 +261,12 @@ public class GameSimulator implements CommandLineRunner, Game.GameStateChangeLis
     }
 
     private boolean isToolAlreadyBroken(Player target, String tool) {
-        switch (tool) {
-            case "PICK": return target.isPickBroken();
-            case "LAMP": return target.isLampBroken();
-            case "CART": return target.isCartBroken();
-            default: return false;
-        }
+        return switch (tool) {
+            case "PICK" -> target.isPickBroken();
+            case "LAMP" -> target.isLampBroken();
+            case "CART" -> target.isCartBroken();
+            default -> false;
+        };
     }
 
     private void checkFixableTools(Player player, ActionCardType actionType, List<String> toolsToFix, List<Player> eligiblePlayers) {

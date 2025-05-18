@@ -1,10 +1,13 @@
 package com.goldstone.saboteur_backend.domain.card;
 
+import lombok.Getter;
+
+@Getter
 public abstract class Card {
-    private String id;
-    private String name;
-    private CardType type;
-    private String imageUrl;
+    private final String id;
+    private final String name;
+    private final CardType type;
+    private final String imageUrl;
 
     public enum CardType {
         PATHWAY, ACTION, GOAL, ROLE  // ROLE 추가
@@ -18,19 +21,4 @@ public abstract class Card {
         this.imageUrl = "/img/cards/" + id + ".png";
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public CardType getType() {
-        return type;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
 }

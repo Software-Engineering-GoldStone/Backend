@@ -23,7 +23,12 @@ public class Board {
                 Cell.Side.PATH, Cell.Side.PATH, Cell.Side.PATH, Cell.Side.PATH
         }));
 
-        this.goalPositions = Arrays.asList(new Position(8, 1), new Position(8, 2), new Position(8, 3));
+        // 목표 카드는 반드시 오른쪽 끝(x=8)에만 위치해야 함
+        this.goalPositions = Arrays.asList(
+                new Position(8, 1),
+                new Position(8, 2),
+                new Position(8, 3)
+        );
         this.goalCards = new HashMap<>();
         List<GoalCard> goals = new ArrayList<>();
         goals.add(new GoalCard("goal_gold", "goal_gold", GoalCardType.GOLD));
@@ -39,7 +44,9 @@ public class Board {
         int x = position.getX(), y = position.getY();
         if (x < 0 || x >= 9 || y < 0 || y >= 5) return false;
         if (cells[y][x].hasCard()) return false;
-        if ((x == startPosition.getX() && y == startPosition.getY()) || goalPositions.contains(position)) return false;
+        if ((x == startPosition.getX() && y == startPosition.getY())) return false;
+        // 목표 위치에는 path/deadend 카드를 절대 놓을 수 없음
+        if (goalPositions.contains(position)) return false;
 
         // 1. 시작점 인접 위치에 놓는 경우는 "해당 방향만 PATH면 반드시 허용"
         if (isAdjacentToStart(x, y)) {
@@ -185,7 +192,7 @@ public class Board {
     public Map<Position, GoalCard> getGoalCards() { return goalCards; }
     public boolean[] getRevealedGoals() { return revealedGoals; }
 
-    // 경로카드의 연결 정보에 따라 ASCII 문자 반환 (시각화)
+    // deadend 카드는 중간에 뚫려있는걸 감안
     public static String getPathAscii(Cell.Side[] sides, boolean isDeadend) {
         boolean up = sides[0] == Cell.Side.PATH;
         boolean right = sides[1] == Cell.Side.PATH;
@@ -193,24 +200,27 @@ public class Board {
         boolean left = sides[3] == Cell.Side.PATH;
 
         if (isDeadend) {
-            // deadend는 가운데가 막혀있음을 점(·)으로 표시
-            if (up && down && !right && !left) return "│·";
-            if (!up && !down && right && left) return "─·";
-            if (up && right && down && left) return "+·";
-            if (!up && right && down && left) return "┴·";
-            if (!up && !right && down && left) return "┘·";
-            if (!up && right && down && !left) return "└·";
-            if (!up && !right && !down && left) return "╴·";
-            if (!up && !right && down && !left) return "╷·";
-            // ... 필요시 추가
+            if (up && !right && !down && !left) return "╹";
+            if (!up && !right && down && !left) return "╻";
+            if (!up && right && !down && !left) return "╶";
+            if (!up && !right && !down && left) return "╴";
+            if (up && down && !right && !left) return "║";
+            if (!up && right && !down) return "═";
+            if (up && right && down && left) return "╬";
+            if (!up && right && left) return "╦";
+            if (up && right && !down && left) return "╩";
+            if (up && !right && down) return "╣";
+            if (up && right && down) return "╠";
+            if (!up && right && down) return "╝";
+            if (!up && down) return "┘";
+            return "X";
         }
 
-        // path류는 기존대로
         if (up && right && down && left) return "+";
-        if (up && right && down) return "┤";
-        if (up && down && left) return "├";
-        if (up && right && left) return "┬";
-        if (right && down && left) return "┴";
+        if (up && right && down) return "├";
+        if (up && down && left) return "┤";
+        if (up && right && left) return "┴";
+        if (right && down && left) return "┬";
         if (up && right) return "└";
         if (right && down) return "┌";
         if (down && left) return "┐";
@@ -221,8 +231,6 @@ public class Board {
         if (up) return "↑";
         if (right) return "→";
         if (left) return "←";
-        return "·";
+        return ".";
     }
-
-
 }

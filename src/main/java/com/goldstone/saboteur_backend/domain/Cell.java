@@ -1,7 +1,9 @@
 package com.goldstone.saboteur_backend.domain;
 
 import com.goldstone.saboteur_backend.domain.card.Card;
+import lombok.Getter;
 
+@Getter
 public class Cell {
     public enum Side {
         PATH,
@@ -19,10 +21,6 @@ public class Cell {
 
     public boolean hasCard() {
         return card != null;
-    }
-
-    public Card getCard() {
-        return card;
     }
 
     public Cell.Side[] getSides() {

@@ -1,7 +1,9 @@
 package com.goldstone.saboteur_backend.domain.card;
 
 import com.goldstone.saboteur_backend.domain.Cell;
+import lombok.Getter;
 
+@Getter
 public class PathCard extends Card {
     public static Cell.Side Side;
     private Cell.Side[] sides;
@@ -9,10 +11,6 @@ public class PathCard extends Card {
     public PathCard(String id, String name, Cell.Side[] sides) {
         super(id, name, Card.CardType.PATHWAY); // CardType 수정
         this.sides = sides;
-    }
-
-    public Cell.Side[] getSides() {
-        return sides;
     }
 
     public PathCard rotate(int times) {

@@ -1,13 +1,15 @@
-package com.goldstone.saboteur_backend.domain;
+package com.goldstone.saboteur_backend.domain.card;
 
-import com.goldstone.saboteur_backend.domain.card.*;
+import com.goldstone.saboteur_backend.domain.Cell;
 import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
 import com.goldstone.saboteur_backend.domain.enums.GoalCardType;
+import lombok.Getter;
 
 import java.util.*;
 
+@Getter
 public class CardDeck {
-    private List<Card> cards;
+    private final List<Card> cards;
 
     public CardDeck() {
         this.cards = new ArrayList<>();
@@ -64,7 +66,7 @@ public class CardDeck {
         cards.add(new PathCard("path_vertical_t_4", "path_vertical_t_4", new Cell.Side[]{Cell.Side.PATH, Cell.Side.PATH, Cell.Side.DEADEND, Cell.Side.PATH}));
         cards.add(new PathCard("path_vertical_t_5", "path_vertical_t_5", new Cell.Side[]{Cell.Side.PATH, Cell.Side.PATH, Cell.Side.DEADEND, Cell.Side.PATH}));
 
-        // 데드엔드
+        // deadend
         cards.add(new PathCard("deadend_both_horizontal", "deadend_both_horizontal", new Cell.Side[]{Cell.Side.DEADEND, Cell.Side.PATH, Cell.Side.DEADEND, Cell.Side.PATH}));
         cards.add(new PathCard("deadend_both_vertical", "deadend_both_vertical", new Cell.Side[]{Cell.Side.PATH, Cell.Side.DEADEND, Cell.Side.PATH, Cell.Side.DEADEND}));
         cards.add(new PathCard("deadend_crossroad", "deadend_crossroad", new Cell.Side[]{Cell.Side.DEADEND, Cell.Side.PATH, Cell.Side.PATH, Cell.Side.PATH}));
@@ -88,7 +90,7 @@ public class CardDeck {
         cards.add(new ActionCard("repair_lantern_pickaxe", "repair_lantern_pickaxe", ActionCardType.FIX_PICK_LAMP));
         cards.add(new ActionCard("map", "map", ActionCardType.MAP));
         cards.add(new ActionCard("rockfall", "rockfall", ActionCardType.COLLAPSE));
-        // ... 기타 필요 액션카드 추가
+
     }
 
     public void shuffle() {
@@ -104,7 +106,4 @@ public class CardDeck {
         return cards.isEmpty();
     }
 
-    public List<Card> getCards() {
-        return cards;
-    }
 }

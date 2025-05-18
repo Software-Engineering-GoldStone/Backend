@@ -4,10 +4,14 @@ import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.enums.GameRole;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 @Entity
 public class Player {
     @Id
@@ -15,6 +19,7 @@ public class Player {
     private String id;
     private String name;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private GameRole role;
 
@@ -25,6 +30,7 @@ public class Player {
     private boolean lampBroken;
     private boolean cartBroken;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "game_room_id", referencedColumnName = "id", columnDefinition = "varchar(255)")
     private GameRoom gameRoom;
@@ -39,16 +45,9 @@ public class Player {
         this.cartBroken = false;
     }
 
-    public String getId() { return id; }
-    public String getName() { return name; }
-    public GameRole getRole() { return role; }
-    public void setRole(GameRole role) { this.role = role; }
-    public List<Card> getHand() { return hand; }
     public void addCardToHand(Card card) { if (card != null) hand.add(card); }
     public void removeCardFromHand(Card card) { hand.remove(card); }
-    public boolean isPickBroken() { return pickBroken; }
-    public boolean isLampBroken() { return lampBroken; }
-    public boolean isCartBroken() { return cartBroken; }
+
     public boolean isHandicapped() { return pickBroken || lampBroken || cartBroken; }
     public void breakTool(String tool) {
         if ("PICK".equals(tool)) pickBroken = true;
@@ -61,6 +60,4 @@ public class Player {
         else if ("CART".equals(tool)) cartBroken = false;
     }
     public boolean canPlayCards() { return !isHandicapped() && !hand.isEmpty(); }
-    public void setGameRoom(GameRoom gameRoom) { this.gameRoom = gameRoom; }
-    public GameRoom getGameRoom() { return gameRoom; }
 }
