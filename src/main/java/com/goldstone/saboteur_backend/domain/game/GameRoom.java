@@ -8,14 +8,7 @@ import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.CreateGameRoomRequestDto;
 import com.goldstone.saboteur_backend.dtos.gameRoom.response.CreateGameRoomResponseDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,14 +56,10 @@ public class GameRoom extends BaseEntity {
 
     public static GameRoom createGameRoom(SocketIOClient client, CreateGameRoomRequestDto dto) {
         User master = new User(dto.getUserId().toString(), LocalDate.now());
-
         GameRoom gameRoom = new GameRoom(master, "겁나 쩌는 게임", 10, 3);
-
         CreateGameRoomResponseDto responseDto = CreateGameRoomResponseDto.from(gameRoom);
-
         client.joinRoom(gameRoom.getId().toString());
         client.sendEvent("gameRoomCreated", responseDto);
-
         return gameRoom;
     }
 
@@ -78,18 +67,21 @@ public class GameRoom extends BaseEntity {
         Integer playerCount = this.userGameRooms.size();
         Integer minPlayers = this.setting.getMinPlayers();
         Integer maxPlayers = this.setting.getMaxPlayers();
-
         return minPlayers <= playerCount && playerCount <= maxPlayers;
     }
 
     /** NOTE: Game이 종료되면 id + 1인 같은 속성을 가진 새로운 게임 객체를 생성하고, 그 객체에서 게임을 진행할 수 있도록 한다. */
     public void endGame() {
         this.status = GameRoomStatus.END;
-        // 필요에 따라 추가 로직 필요.
     }
 
-    private void changeStatus(GameRoomStatus status) {
+    void changeStatus(GameRoomStatus status) {
         this.status = status;
+    }
+
+    // 추가: 라운드 증가 메서드
+    public void incrementRound() {
+        this.round++;
     }
 
     public List<User> getPlayers() {

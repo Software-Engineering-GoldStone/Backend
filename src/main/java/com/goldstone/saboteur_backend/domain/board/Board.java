@@ -35,9 +35,9 @@ public class Board {
         Collections.shuffle(goalCards);
 
         Cell goalCells[] = {
-            this.getCellFromXAndY(WIDTH - 1, 0),
-            this.getCellFromXAndY(WIDTH - 1, 2),
-            this.getCellFromXAndY(WIDTH - 1, 4)
+                this.getCellFromXAndY(WIDTH - 1, 0),
+                this.getCellFromXAndY(WIDTH - 1, 2),
+                this.getCellFromXAndY(WIDTH - 1, 4)
         };
 
         for (int i = 0; i < 3; i++) {
@@ -77,9 +77,9 @@ public class Board {
 
     public Cell[] getGoals() {
         return new Cell[] {
-            this.getCellFromXAndY(WIDTH - 1, 0),
-            this.getCellFromXAndY(WIDTH - 1, 2),
-            this.getCellFromXAndY(WIDTH - 1, 4)
+                this.getCellFromXAndY(WIDTH - 1, 0),
+                this.getCellFromXAndY(WIDTH - 1, 2),
+                this.getCellFromXAndY(WIDTH - 1, 4)
         };
     }
 
