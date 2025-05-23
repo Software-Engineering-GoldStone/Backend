@@ -29,27 +29,27 @@ public class ActionCard extends Card {
     // destroyTool
 
     // fallingRock
-    public void fallingRock(Cell targetCell){
-        if(this.type != ActionCardType.FALLING_ROCK){
+    public void fallingRock(Cell targetCell) {
+        if (this.type != ActionCardType.FALLING_ROCK) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
         targetCell.removeCard();
     }
 
-
     // peekDestinationCard
-    public GoalCardType peekDestinationCard(Cell targetCell){
-        if(this.type != ActionCardType.MAP){
+    public GoalCardType peekDestinationCard(Cell targetCell) {
+        if (this.type != ActionCardType.MAP) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
-        if(!(targetCell.getCard() instanceof GoalCard) || targetCell == null || targetCell.isEmptyCard()){
+        if (!(targetCell.getCard() instanceof GoalCard)
+                || targetCell == null
+                || targetCell.isEmptyCard()) {
             throw new BusinessException(CardErrorCode.INVALID_GOAL_CARD);
         }
 
         GoalCard goalCard = (GoalCard) targetCell.getCard();
         return goalCard.getType();
     }
-
 }
