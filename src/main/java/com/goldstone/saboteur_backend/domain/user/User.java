@@ -1,12 +1,17 @@
 package com.goldstone.saboteur_backend.domain.user;
 
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
+import com.goldstone.saboteur_backend.domain.enums.PlayerToolStatus;
+import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.enums.UserStatus;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameLog;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,9 +40,42 @@ public class User extends BaseEntity {
 
     @Transient private UserCardDeck cardDeck;
 
+    @Transient
+    private Map<TargetToolType, PlayerToolStatus> toolStatusMap =
+            new EnumMap<>(TargetToolType.class);
+
     public User(String nickname, LocalDate birthDate) {
         this.nickname = nickname;
         this.birthDate = birthDate;
+    }
+
+    // 플레이어의 도구 상태 초기화
+    public void initToolStatus() {
+        for (TargetToolType tool : TargetToolType.values()) {
+            toolStatusMap.put(tool, PlayerToolStatus.FIXED);
+        }
+    }
+
+    // 플레이어의 도구가 하나라도 망가져 있다면 길 카드 배치 불가능
+    public boolean canePlacePathCard() {
+        for (PlayerToolStatus staus : toolStatusMap.values()) {
+            if (staus != PlayerToolStatus.FIXED) return false;
+        }
+        return true;
+    }
+
+    public void breakTool(TargetToolType toolType) {
+        toolStatusMap.put(toolType, PlayerToolStatus.BROKEN);
+    }
+
+    public void repairTool(TargetToolType toolType) {
+        toolStatusMap.put(toolType, PlayerToolStatus.FIXED);
+    }
+
+    public void repairTools(Set<TargetToolType> tools) {
+        for (TargetToolType tool : tools) {
+            toolStatusMap.put(tool, PlayerToolStatus.FIXED);
+        }
     }
 
     @Override
