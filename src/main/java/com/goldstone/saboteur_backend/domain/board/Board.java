@@ -10,20 +10,22 @@ import lombok.Getter;
 
 @Getter
 public class Board {
-    public static final int WIDTH = 9;
-    public static final int HEIGHT = 5;
+    public static final int DEFAULT_WIDTH = 9;
+    public static final int DEFAULT_HEIGHT = 5;
+
+    public static final Integer DEFAULT_GOAL_CELL_Y_LIST[] = {0, 2, 4};
 
     private final Set<Cell> dynamicCells = new HashSet<>();
 
     public Board() {
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
+        for (int y = 0; y < DEFAULT_HEIGHT; y++) {
+            for (int x = 0; x < DEFAULT_WIDTH; x++) {
                 dynamicCells.add(new Cell(x, y));
             }
         }
 
         // 시작 카드 배치
-        Cell startCell = this.getCellFromXAndY(0, HEIGHT / 2);
+        Cell startCell = this.getCellFromXAndY(0, DEFAULT_HEIGHT / 2);
         startCell.setCard(new StartCard());
 
         // 골 카드 배치
@@ -34,14 +36,12 @@ public class Board {
                         new GoalCard(GoalCardType.EMPTY, PathCardType.RIGHT_TURN));
         Collections.shuffle(goalCards);
 
-        Cell goalCells[] = {
-            this.getCellFromXAndY(WIDTH - 1, 0),
-            this.getCellFromXAndY(WIDTH - 1, 2),
-            this.getCellFromXAndY(WIDTH - 1, 4)
-        };
+        for (int i = 0; i < DEFAULT_GOAL_CELL_Y_LIST.length; i++) {
+            int x = DEFAULT_WIDTH - 1;
+            int y = DEFAULT_GOAL_CELL_Y_LIST[i];
+            GoalCard goalCard = goalCards.get(i);
 
-        for (int i = 0; i < 3; i++) {
-            goalCells[i].setCard(goalCards.get(i));
+            this.getCellFromXAndY(x, y).setCard(goalCard);
         }
     }
 
@@ -77,9 +77,9 @@ public class Board {
 
     public Cell[] getGoals() {
         return new Cell[] {
-            this.getCellFromXAndY(WIDTH - 1, 0),
-            this.getCellFromXAndY(WIDTH - 1, 2),
-            this.getCellFromXAndY(WIDTH - 1, 4)
+            this.getCellFromXAndY(DEFAULT_WIDTH - 1, 0),
+            this.getCellFromXAndY(DEFAULT_WIDTH - 1, 2),
+            this.getCellFromXAndY(DEFAULT_WIDTH - 1, 4)
         };
     }
 
