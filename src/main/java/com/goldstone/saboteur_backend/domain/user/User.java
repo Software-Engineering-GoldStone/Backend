@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,6 +63,20 @@ public class User extends BaseEntity {
             if (staus != PlayerToolStatus.FIXED) return false;
         }
         return true;
+    }
+
+    public void breakTool(TargetToolType toolType) {
+        toolStatusMap.put(toolType, PlayerToolStatus.BROKEN);
+    }
+
+    public void repairTool(TargetToolType toolType) {
+        toolStatusMap.put(toolType, PlayerToolStatus.FIXED);
+    }
+
+    public void repairTools(Set<TargetToolType> tools) {
+        for (TargetToolType tool : tools) {
+            toolStatusMap.put(tool, PlayerToolStatus.FIXED);
+        }
     }
 
     @Override

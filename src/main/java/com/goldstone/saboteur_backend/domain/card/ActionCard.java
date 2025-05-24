@@ -44,18 +44,18 @@ public class ActionCard extends Card {
 
     // repairTool
     public void repairTool() {
-        for (TargetToolType toolType : tools) {
-            if (targetUser.getToolStatusMap().containsKey(toolType)) {
-                targetUser.getToolStatusMap().put(toolType, PlayerToolStatus.FIXED);
-            }
+        if (targetUser == null || tools == null) {
+            throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
+        targetUser.repairTools(tools);
     }
 
     // destroyTool
     public void destroyTool() {
-        if (targetUser.getToolStatusMap().containsKey(tool)) {
-            targetUser.getToolStatusMap().put(tool, PlayerToolStatus.BROKEN);
+        if (targetUser == null || tool == null) {
+            throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
+        targetUser.breakTool(tool);
     }
 
     // peekDestinationCard
