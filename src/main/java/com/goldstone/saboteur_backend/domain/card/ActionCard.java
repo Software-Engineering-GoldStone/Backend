@@ -3,7 +3,6 @@ package com.goldstone.saboteur_backend.domain.card;
 import com.goldstone.saboteur_backend.domain.board.Cell;
 import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
 import com.goldstone.saboteur_backend.domain.enums.GoalCardType;
-import com.goldstone.saboteur_backend.domain.enums.PlayerToolStatus;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.exception.BusinessException;

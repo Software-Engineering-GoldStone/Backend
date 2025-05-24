@@ -1,36 +1,30 @@
 package com.goldstone.saboteur_backend.domain.card;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.board.Cell;
 import com.goldstone.saboteur_backend.domain.enums.*;
 import com.goldstone.saboteur_backend.domain.user.User;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class ActionCardTest {
 
     @BeforeEach
-    void setUp() {
-    }
+    void setUp() {}
 
     @AfterEach
-    void tearDown() {
-    }
+    void tearDown() {}
 
     @Test
-    void use() {
-
-    }
+    void use() {}
 
     @Test
-    void availableUse() {
-    }
+    void availableUse() {}
 
     @Test
     void repairTool() {
@@ -70,7 +64,6 @@ class ActionCardTest {
         actionCard.use();
 
         assertEquals(PlayerToolStatus.BROKEN, user.getToolStatusMap().get(TargetToolType.CART));
-
     }
 
     @Test
@@ -89,9 +82,9 @@ class ActionCardTest {
     }
 
     @Test
-    void fallingRock(){
+    void fallingRock() {
         Board board = new Board();
-        Cell cell = new Cell(2,1);
+        Cell cell = new Cell(2, 1);
         cell.setCard(new PathCard(PathCardType.CROSSROAD, false));
 
         assertFalse(cell.isEmptyCard());
@@ -104,44 +97,33 @@ class ActionCardTest {
         assertTrue(cell.isEmptyCard());
     }
 
+    @Test
+    void getType() {}
 
     @Test
-    void getType() {
-    }
+    void getTool() {}
 
     @Test
-    void getTool() {
-    }
+    void getTargetCell() {}
 
     @Test
-    void getTargetCell() {
-    }
+    void getTools() {}
 
     @Test
-    void getTools() {
-    }
+    void getTargetUser() {}
 
     @Test
-    void getTargetUser() {
-    }
+    void setType() {}
 
     @Test
-    void setType() {
-    }
+    void setTool() {}
 
     @Test
-    void setTool() {
-    }
+    void setTargetCell() {}
 
     @Test
-    void setTargetCell() {
-    }
+    void setTools() {}
 
     @Test
-    void setTools() {
-    }
-
-    @Test
-    void setTargetUser() {
-    }
+    void setTargetUser() {}
 }
