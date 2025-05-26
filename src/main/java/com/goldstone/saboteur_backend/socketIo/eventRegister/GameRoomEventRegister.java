@@ -26,6 +26,6 @@ public class GameRoomEventRegister implements SocketEventRegister {
         server.addEventListener(
                 "startGame",
                 StartGameRequestDto.class,
-                (client, data, ackSender) -> this.gameRoomService.startGame(client, data));
+                (client, data, ackSender) -> this.gameRoomService.startGame(data));
     }
 }

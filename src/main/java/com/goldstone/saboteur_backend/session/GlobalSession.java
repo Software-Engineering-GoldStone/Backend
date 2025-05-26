@@ -41,4 +41,13 @@ public class GlobalSession {
     public GameRoom getGameRoomSession(UUID gameRoomId) {
         return this.wrapperCall(() -> this.gameRoomSession.get(gameRoomId));
     }
+
+    public boolean addGameBoardSession(GameRoom gameRoom, Board board) {
+        this.wrapperCall(() -> this.gameBoardSession.put(gameRoom.getId(), board));
+        return true;
+    }
+
+    public Board getGameBoardSession(UUID gameRoomId) {
+        return this.wrapperCall(() -> this.gameBoardSession.get(gameRoomId));
+    }
 }
