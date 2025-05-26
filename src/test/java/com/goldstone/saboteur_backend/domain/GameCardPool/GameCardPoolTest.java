@@ -66,16 +66,16 @@ public class GameCardPoolTest {
             assertEquals(
                     cardsPerPlayer,
                     user.getCardDeck().getCards().size(),
-                    "Each user should have the correct number of cards assigned.");
+                    "각 User 는 cardsPerPlayer 개의 카드를 가져야 함.");
         }
 
-        // Verify that each user's card deck is different
+        // 각 user 의 카드 덱이 서로 다름을 검증
         for (int i = 0; i < users.size(); i++) {
             for (int j = i + 1; j < users.size(); j++) {
                 assertNotEquals(
                         users.get(i).getCardDeck().getCards(),
                         users.get(j).getCardDeck().getCards(),
-                        "Each user's card deck should be different.");
+                        "각 User 의 카드 덱은 서로 달라야 함.");
             }
         }
     }
