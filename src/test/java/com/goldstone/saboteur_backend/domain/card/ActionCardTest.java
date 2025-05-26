@@ -36,34 +36,28 @@ class ActionCardTest {
         assertEquals(PlayerToolStatus.BROKEN, user.getToolStatusMap().get(TargetToolType.CART));
         assertEquals(PlayerToolStatus.BROKEN, user.getToolStatusMap().get(TargetToolType.LIGHT));
 
-        Set<TargetToolType> tools = new HashSet<>();
-        tools.add(TargetToolType.CART);
-        tools.add(TargetToolType.LIGHT);
+        Set<TargetToolType> repairTools = new HashSet<>();
+        repairTools.add(TargetToolType.CART);
+        repairTools.add(TargetToolType.LIGHT);
 
-        ActionCard actionCard = new ActionCard();
-        actionCard.setType(ActionCardType.REPAIR);
-        actionCard.setTools(tools);
-
-        actionCard.setTargetUser(user);
-        actionCard.use();
+        RepairToolCard repairToolCard = new RepairToolCard(repairTools);
+        repairToolCard.use(user);
 
         assertEquals(PlayerToolStatus.FIXED, user.getToolStatusMap().get(TargetToolType.CART));
         assertEquals(PlayerToolStatus.FIXED, user.getToolStatusMap().get(TargetToolType.LIGHT));
     }
 
     @Test
-    void destroyTool() {
-        ActionCard actionCard = new ActionCard();
-        actionCard.setType(ActionCardType.DESTROY);
-        actionCard.setTool(TargetToolType.CART);
+    void breakTool() {
+        User targetUser = new User();
+        targetUser.initToolStatus();
 
-        User user = new User();
-        user.initToolStatus();
+        assertTrue(targetUser.areAllToolsFixed());
 
-        actionCard.setTargetUser(user);
-        actionCard.use();
+        BreakToolCard breakToolCard = new BreakToolCard(TargetToolType.CART);
+        breakToolCard.use(targetUser);
 
-        assertEquals(PlayerToolStatus.BROKEN, user.getToolStatusMap().get(TargetToolType.CART));
+        assertFalse(targetUser.areAllToolsFixed());
     }
 
     @Test
@@ -72,10 +66,9 @@ class ActionCardTest {
         Cell cell = new Cell(8, 0);
         cell.setCard(new GoalCard(GoalCardType.GOLD, PathCardType.CROSSROAD));
 
-        ActionCard actionCard = new ActionCard();
-        actionCard.setType(ActionCardType.MAP);
+        MapCard mapCard = new MapCard();
 
-        GoalCardType goalCardType = actionCard.peekDestinationCard(cell);
+        GoalCardType goalCardType = mapCard.peekDestinationCard(cell);
 
         assertEquals(GoalCardType.GOLD, goalCardType);
         assertNotEquals(GoalCardType.EMPTY, goalCardType);
@@ -89,10 +82,8 @@ class ActionCardTest {
 
         assertFalse(cell.isEmptyCard());
 
-        ActionCard card = new ActionCard();
-        card.setType(ActionCardType.FALLING_ROCK);
-        card.setTargetCell(cell);
-        card.use();
+        FallingRockCard fallingRockCard = new FallingRockCard();
+        fallingRockCard.use(cell);
 
         assertTrue(cell.isEmptyCard());
     }

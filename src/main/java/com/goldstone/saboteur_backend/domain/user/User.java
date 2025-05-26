@@ -49,15 +49,13 @@ public class User extends BaseEntity {
         this.birthDate = birthDate;
     }
 
-    // 플레이어의 도구 상태 초기화
     public void initToolStatus() {
         for (TargetToolType tool : TargetToolType.values()) {
             toolStatusMap.put(tool, PlayerToolStatus.FIXED);
         }
     }
 
-    // 플레이어의 도구가 하나라도 망가져 있다면 길 카드 배치 불가능
-    public boolean canePlacePathCard() {
+    public boolean areAllToolsFixed() {
         for (PlayerToolStatus staus : toolStatusMap.values()) {
             if (staus != PlayerToolStatus.FIXED) return false;
         }
@@ -66,10 +64,6 @@ public class User extends BaseEntity {
 
     public void breakTool(TargetToolType toolType) {
         toolStatusMap.put(toolType, PlayerToolStatus.BROKEN);
-    }
-
-    public void repairTool(TargetToolType toolType) {
-        toolStatusMap.put(toolType, PlayerToolStatus.FIXED);
     }
 
     public void repairTools(Set<TargetToolType> tools) {
