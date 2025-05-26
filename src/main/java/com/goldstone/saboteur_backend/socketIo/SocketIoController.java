@@ -3,8 +3,9 @@ package com.goldstone.saboteur_backend.socketIo;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
-import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.CreateGameRoomRequestDto;
+import com.goldstone.saboteur_backend.dtos.gameRoom.request.JoinGameRoomRequestDto;
+import com.goldstone.saboteur_backend.service.gameRoom.GameRoomService;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +15,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SocketIoController {
     private final SocketIOServer server;
+    private final GameRoomService gameRoomService;
 
     /** 소켓 이벤트 리스너 등록 */
-    public SocketIoController(SocketIOServer server) {
+    public SocketIoController(SocketIOServer server, GameRoomService gameRoomService) {
         this.server = server;
+        this.gameRoomService = gameRoomService;
 
         // 소켓 이벤트 리스너 등록
         server.addConnectListener(listenConnected());
@@ -26,7 +29,11 @@ public class SocketIoController {
         server.addEventListener(
                 "createGameRoom",
                 CreateGameRoomRequestDto.class,
-                (client, data, ackSender) -> GameRoom.createGameRoom(client, data));
+                (client, data, ackSender) -> this.gameRoomService.createGameRoom(client, data));
+        server.addEventListener(
+                "joinGameRoom",
+                JoinGameRoomRequestDto.class,
+                (client, data, ackSender) -> this.gameRoomService.joinGameRoom(client, data));
     }
 
     public ConnectListener listenConnected() {

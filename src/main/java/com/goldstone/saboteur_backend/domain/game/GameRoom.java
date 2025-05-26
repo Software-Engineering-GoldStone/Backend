@@ -1,28 +1,16 @@
 package com.goldstone.saboteur_backend.domain.game;
 
-import com.corundumstudio.socketio.SocketIOClient;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import com.goldstone.saboteur_backend.domain.enums.GameRoomStatus;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRole;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
-import com.goldstone.saboteur_backend.dtos.gameRoom.request.CreateGameRoomRequestDto;
-import com.goldstone.saboteur_backend.dtos.gameRoom.response.CreateGameRoomResponseDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import java.time.LocalDate;
+import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @ToString
 @Getter
@@ -30,9 +18,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GameRoom extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Id private UUID id;
 
     @Enumerated(EnumType.STRING)
     private GameRoomStatus status = GameRoomStatus.READY;
@@ -49,28 +35,24 @@ public class GameRoom extends BaseEntity {
     private GameLog gameLog;
 
     @OneToMany(mappedBy = "gameRoom")
-    private List<GameRoundLog> roundLogs;
+    private List<GameRoundLog> roundLogs = new ArrayList<>();
 
     @OneToMany(mappedBy = "gameRoom")
-    private List<UserGameRole> userGameRoles;
+    private List<UserGameRole> userGameRoles = new ArrayList<>();
 
     @OneToMany(mappedBy = "gameRoom")
-    private List<UserGameRoom> userGameRooms;
+    private List<UserGameRoom> userGameRooms = new ArrayList<>();
 
-    public GameRoom(User master, String title, int maxPlayers, int minPlayers) {
-        this.setting = new GameSetting(this, title, maxPlayers, minPlayers);
+    public GameRoom(User host, String title, int maxPlayers, int minPlayers) {
+        this.id = UUID.randomUUID();
+        this.setting = new GameSetting(this, host, title, maxPlayers, minPlayers);
     }
 
-    public static GameRoom createGameRoom(SocketIOClient client, CreateGameRoomRequestDto dto) {
-        User master = new User(dto.getUserId().toString(), LocalDate.now());
+    public static GameRoom createGameRoomByHost(User host) {
+        GameRoom gameRoom = new GameRoom(host, "겁나 쩌는 게임", 10, 3);
+        UserGameRoom userGameRoom = new UserGameRoom(gameRoom, host);
 
-        GameRoom gameRoom = new GameRoom(master, "겁나 쩌는 게임", 10, 3);
-
-        CreateGameRoomResponseDto responseDto = CreateGameRoomResponseDto.from(gameRoom);
-
-        client.joinRoom(gameRoom.getId().toString());
-        client.sendEvent("gameRoomCreated", responseDto);
-
+        gameRoom.userGameRooms.add(userGameRoom);
         return gameRoom;
     }
 
@@ -94,5 +76,9 @@ public class GameRoom extends BaseEntity {
 
     public List<User> getPlayers() {
         return this.userGameRooms.stream().map(UserGameRoom::getUser).collect(Collectors.toList());
+    }
+
+    public void addPlayer(User user) {
+        this.userGameRooms.add(new UserGameRoom(this, user));
     }
 }

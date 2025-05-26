@@ -7,6 +7,7 @@ import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id; // UUID는 JPA가 자동으로 생성해주지 않음
+    @Id private UUID id;
 
     private LocalDate birthDate;
 
@@ -36,6 +35,7 @@ public class User extends BaseEntity {
     @Transient private UserCardDeck cardDeck;
 
     public User(String nickname, LocalDate birthDate) {
+        this.id = UUID.randomUUID();
         this.nickname = nickname;
         this.birthDate = birthDate;
     }
