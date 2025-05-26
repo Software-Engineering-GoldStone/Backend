@@ -56,6 +56,9 @@ public class GameCardPool {
             }
             if (user.getCardDeck() != null && user.getCardDeck().getCards() != null) {
                 user.getCardDeck().getCards().addAll(cards);
+                System.out.println("cards added");
+            } else {
+                System.out.println("cards not added");
             }
         }
     }

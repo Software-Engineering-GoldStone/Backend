@@ -33,7 +33,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<UserGameRoom> userGameRooms;
 
-    @Transient private UserCardDeck cardDeck;
+    @Transient private UserCardDeck cardDeck = new UserCardDeck();
 
     public User(String nickname, LocalDate birthDate) {
         this.nickname = nickname;
