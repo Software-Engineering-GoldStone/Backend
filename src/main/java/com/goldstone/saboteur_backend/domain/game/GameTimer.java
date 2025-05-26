@@ -27,7 +27,7 @@ public class GameTimer extends BaseEntity {
 
     private long startTime;
 
-    public GameTimer(Double maxTime) { //커스텀(나머지 변수의 초기값은 세팅 필요x)
+    public GameTimer(Double maxTime) { // 커스텀(나머지 변수의 초기값은 세팅 필요x)
         this.maxTime = maxTime;
     }
 
@@ -52,9 +52,10 @@ public class GameTimer extends BaseEntity {
 
     public boolean istimedout() {
         if (running) {
-            double elapsedTime = (System.currentTimeMillis() - this.startTime) / 1000.0; //stop 안 된 상태에서
+            double elapsedTime =
+                    (System.currentTimeMillis() - this.startTime) / 1000.0; // stop 안 된 상태에서
             return (this.time + elapsedTime) >= this.maxTime;
         }
-        return this.time >= this.maxTime; //한 번 stop 된 상태에서
+        return this.time >= this.maxTime; // 한 번 stop 된 상태에서
     }
 }

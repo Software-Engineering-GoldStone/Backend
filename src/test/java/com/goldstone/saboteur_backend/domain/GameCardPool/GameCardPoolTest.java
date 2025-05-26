@@ -1,18 +1,17 @@
 package com.goldstone.saboteur_backend.domain.GameCardPool;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.TestCard;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.user.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.LinkedList;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -37,13 +36,15 @@ public class GameCardPoolTest {
         List<Card> previousShuffle = new ArrayList<>(initialCards);
         for (int i = 0; i < 5; i++) {
             gameCardPool.shuffleCards();
-            List<Card> currentShuffle = new ArrayList<>(gameCardPool.getCards()); 
-            
-            //두 리스트가 순서, 내용(요소), 크기 중 하나라도 다르면 not equal
+            List<Card> currentShuffle = new ArrayList<>(gameCardPool.getCards());
+
+            // 두 리스트가 순서, 내용(요소), 크기 중 하나라도 다르면 not equal
             assertNotEquals(previousShuffle, currentShuffle, "shuffle 이후 cards의 순서가 바꿔어야 함.");
-            
-            assertTrue(currentShuffle.containsAll(previousShuffle) && previousShuffle.containsAll(currentShuffle),
-                "shuffle 이후의 카드 풀에 이전 shuffle의 카드 풀의 모든 카드(요소)가 포함되어야 함.");
+
+            assertTrue(
+                    currentShuffle.containsAll(previousShuffle)
+                            && previousShuffle.containsAll(currentShuffle),
+                    "shuffle 이후의 카드 풀에 이전 shuffle의 카드 풀의 모든 카드(요소)가 포함되어야 함.");
 
             previousShuffle = currentShuffle;
         }
@@ -55,21 +56,25 @@ public class GameCardPoolTest {
     public void testAssignCards(int cardsPerPlayer) {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            users.add(new User()); 
+            users.add(new User());
         }
 
         gameCardPool.assignCards(users, cardsPerPlayer);
 
         for (User user : users) {
             assertNotNull(user.getCardDeck(), "User의 card deck 은 not null 이어야 함.");
-            assertEquals(cardsPerPlayer, user.getCardDeck().getCards().size(),
+            assertEquals(
+                    cardsPerPlayer,
+                    user.getCardDeck().getCards().size(),
                     "Each user should have the correct number of cards assigned.");
         }
 
         // Verify that each user's card deck is different
         for (int i = 0; i < users.size(); i++) {
             for (int j = i + 1; j < users.size(); j++) {
-                assertNotEquals(users.get(i).getCardDeck().getCards(), users.get(j).getCardDeck().getCards(),
+                assertNotEquals(
+                        users.get(i).getCardDeck().getCards(),
+                        users.get(j).getCardDeck().getCards(),
                         "Each user's card deck should be different.");
             }
         }

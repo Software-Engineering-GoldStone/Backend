@@ -1,7 +1,6 @@
 package com.goldstone.saboteur_backend.domain.user;
 
 import com.goldstone.saboteur_backend.domain.card.Card;
-
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;

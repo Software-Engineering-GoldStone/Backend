@@ -1,15 +1,17 @@
 package com.goldstone.saboteur_backend.domain.GameTimer;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import com.goldstone.saboteur_backend.domain.game.GameTimer;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("GameTimer Test")
 public class GameTimerTest {
 
     private GameTimer gameTimer;
-    private final double maxTime = 5.0; 
+    private final double maxTime = 5.0;
 
     @BeforeEach
     public void setUp() {
@@ -56,7 +58,7 @@ public class GameTimerTest {
     public void testNotTimedOut() throws InterruptedException {
         gameTimer.start();
         Thread.sleep(3000); // 3초 동안 sleep
-		gameTimer.stop();
+        gameTimer.stop();
         assertFalse(gameTimer.istimedout(), "max time 경과 전 istimedout() 이 false 여야 함.");
     }
 }

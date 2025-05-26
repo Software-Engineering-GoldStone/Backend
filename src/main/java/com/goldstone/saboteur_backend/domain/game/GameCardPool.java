@@ -5,7 +5,6 @@ import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.CardPoolErrorCode;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
