@@ -20,8 +20,8 @@ public class TestCard extends Card {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TestCard testard = (TestCard) o;
-        return cardNumber == testard.cardNumber;
+        TestCard testCard = (TestCard) o;
+        return cardNumber == testCard.cardNumber;
     }
 
     @Override

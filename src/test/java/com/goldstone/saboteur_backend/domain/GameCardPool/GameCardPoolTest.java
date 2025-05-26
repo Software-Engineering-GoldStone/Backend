@@ -39,7 +39,7 @@ public class GameCardPoolTest {
             List<Card> currentShuffle = new ArrayList<>(gameCardPool.getCards());
 
             // 두 리스트가 순서, 내용(요소), 크기 중 하나라도 다르면 not equal
-            assertNotEquals(previousShuffle, currentShuffle, "shuffle 이후 cards의 순서가 바꿔어야 함.");
+            assertNotEquals(previousShuffle, currentShuffle, "shuffle 이후 cards의 순서가 바뀌어야 함.");
 
             assertTrue(
                     currentShuffle.containsAll(previousShuffle)
