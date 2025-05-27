@@ -13,13 +13,14 @@ import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import com.goldstone.saboteur_backend.socketIo.SocketIoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class GameRoomServiceImpl implements GameRoomService {
 
-    private final GlobalSession globalSession;
+    @Autowired private final GlobalSession globalSession;
     private final SocketIoService socketIoService;
 
     @Override

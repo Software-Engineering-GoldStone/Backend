@@ -11,8 +11,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GlobalSession {
+    // Key: User ID
     private final Map<UUID, User> userSession = new ConcurrentHashMap<>();
+    // Key: Game Room ID
     private final Map<UUID, GameRoom> gameRoomSession = new ConcurrentHashMap<>();
+    // Key: Game Room ID
     private final Map<UUID, Board> gameBoardSession = new ConcurrentHashMap<>();
 
     private <T> T wrapperCall(Supplier<T> action) {

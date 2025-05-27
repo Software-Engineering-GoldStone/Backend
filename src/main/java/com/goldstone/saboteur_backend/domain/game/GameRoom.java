@@ -65,7 +65,7 @@ public class GameRoom extends BaseEntity {
     }
 
     public boolean canJoinGameRoom() {
-        return this.getUserGameRooms().size() + 1 > this.getSetting().getMaxPlayers();
+        return this.getUserGameRooms().size() < this.getSetting().getMaxPlayers();
     }
 
     public void startGame() {

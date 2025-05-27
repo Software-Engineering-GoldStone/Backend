@@ -9,12 +9,12 @@ import lombok.Getter;
 @Getter
 public class CreateGameRoomResponseDto {
     private String id;
-    private UserInfoResponseDto masterPlayer;
+    private UserInfoResponseDto host;
 
     public static CreateGameRoomResponseDto from(GameRoom gameRoom) {
         return CreateGameRoomResponseDto.builder()
                 .id(gameRoom.getId().toString())
-                .masterPlayer(UserInfoResponseDto.from(gameRoom.getSetting().getHost()))
+                .host(UserInfoResponseDto.from(gameRoom.getSetting().getHost()))
                 .build();
     }
 }
