@@ -2,8 +2,8 @@ package com.goldstone.saboteur_backend.domain.GameCardPool;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.goldstone.saboteur_backend.domain.card.ActionCard;
 import com.goldstone.saboteur_backend.domain.card.Card;
-import com.goldstone.saboteur_backend.domain.card.TestCard;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class GameCardPoolTest {
     public void setUp() {
         initialCards = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
-            initialCards.add(new TestCard(i)); // 40개의 unique cards 생성
+            initialCards.add(new ActionCard()); // 40개의 unique cards 생성
         }
         gameCardPool = new GameCardPool(new LinkedList<>(initialCards));
     }
@@ -33,7 +33,7 @@ public class GameCardPoolTest {
     @Test
     @DisplayName("카드 shuffle 정상 작동 검증")
     public void testShuffleCards() {
-        List<Card> previousShuffle = new ArrayList<>(initialCards);
+        List<Card> previousShuffle = new ArrayList<>(gameCardPool.getCards());
         for (int i = 0; i < 5; i++) {
             gameCardPool.shuffleCards();
             List<Card> currentShuffle = new ArrayList<>(gameCardPool.getCards());
