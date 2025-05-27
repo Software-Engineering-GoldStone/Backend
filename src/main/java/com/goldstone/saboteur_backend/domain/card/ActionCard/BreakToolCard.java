@@ -1,13 +1,12 @@
 package com.goldstone.saboteur_backend.domain.card.ActionCard;
 
-import com.goldstone.saboteur_backend.domain.card.UsableOnUser;
 import com.goldstone.saboteur_backend.domain.enums.PlayerToolStatus;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 
-public class BreakToolCard extends ActionCard implements UsableOnUser {
+public class BreakToolCard extends ActionCard {
     private TargetToolType breakTool;
 
     public BreakToolCard(TargetToolType breakTool) {
