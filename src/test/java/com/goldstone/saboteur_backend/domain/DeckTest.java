@@ -2,14 +2,17 @@ package com.goldstone.saboteur_backend.domain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
+import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
 import com.goldstone.saboteur_backend.service.game.GameService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,7 +40,7 @@ public class DeckTest {
         for (int i = 0; i < users.size(); i++) {
             userGameRooms.add(new UserGameRoom(gameRoom, users.get(i)));
         }
-        // 공식 룰에 맞는 카드풀 생성
+        // 공식 룰에 맞는 카드풀 생성 (GameCardPool.createDefaultPool() 사용)
         cardPool = GameCardPool.createDefaultPool(gameRoom.getId());
     }
 
@@ -55,25 +58,51 @@ public class DeckTest {
         prepareTestData(playerCount);
         GameService gameService = new GameService(userGameRooms, cardPool);
 
-        for (int i = 0; i < playerCount; i++) {
-            User beforeTurnUser = users.get(i);
-            int beforeDeckSize =
-                    gameService.getUserCardDecks().get(beforeTurnUser).getCards().size();
+        // 초기 손패 분배 확인
+        int initialHandSize = getCardsPerPlayer(playerCount);
+        Map<User, UserCardDeck> userCardDecks = gameService.getUserCardDecks();
+        for (User user : users) {
+            assertEquals(initialHandSize, userCardDecks.get(user).getCards().size());
+        }
+
+        // 초기 카드풀 크기 확인 (공식 룰: 71장 - 플레이어 수 × 초기 손패)
+        int expectedInitialPoolSize = 71 - (playerCount * initialHandSize);
+        assertEquals(expectedInitialPoolSize, cardPool.getCards().size());
+
+        // 실제 게임처럼 카드풀이 소진될 때까지 턴 진행 (플레이어 순환)
+        int turn = 0;
+        while (!cardPool.isEmpty()) {
+            User currentUser = users.get(turn % playerCount);
+            UserCardDeck deck = userCardDecks.get(currentUser);
+
+            // 플레이어가 손패에서 1장을 내거나 버림 (임의로 첫 번째 카드 사용)
+            int beforeDeckSize = deck.getCards().size();
+            if (beforeDeckSize > 0) {
+                Card cardToPlay = deck.getCards().get(0);
+                assertTrue(gameService.playCard(currentUser, cardToPlay));
+                // playCard()가 실제로 카드를 제거하는지 확인
+                assertEquals(beforeDeckSize - 1, deck.getCards().size());
+            }
+
+            // 턴 종료 시 카드풀에서 1장 뽑기 (GameService의 nextTurn())
             int beforePoolSize = cardPool.getCards().size();
-
             gameService.nextTurn();
-
-            int afterDeckSize =
-                    gameService.getUserCardDecks().get(beforeTurnUser).getCards().size();
             int afterPoolSize = cardPool.getCards().size();
 
+            // 카드풀에 카드가 남아있으면, 손패 크기는 1장 감소 후 1장 증가 = 유지
             if (beforePoolSize > 0) {
-                assertEquals(beforeDeckSize + 1, afterDeckSize);
+                // ※ 실제 게임 룰대로라면 손패 크기는 유지되어야 함
+                assertEquals(beforeDeckSize, deck.getCards().size());
                 assertEquals(beforePoolSize - 1, afterPoolSize);
             } else {
-                assertEquals(beforeDeckSize, afterDeckSize);
+                // 카드풀이 비었으면, 손패는 1장 감소(뽑지 않음)
+                assertEquals(beforeDeckSize - 1, deck.getCards().size());
                 assertEquals(0, afterPoolSize);
             }
+            turn++;
         }
+
+        // 카드풀 소진 검증
+        assertEquals(0, cardPool.getCards().size());
     }
 }

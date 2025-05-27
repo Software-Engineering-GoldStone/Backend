@@ -12,6 +12,7 @@ import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Getter
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class GameCardPool {
+    @Setter
     private UUID id;
     private Queue<Card> cards = new LinkedList<>();
 
@@ -31,10 +33,6 @@ public class GameCardPool {
             throw new RuntimeException("No cards left in the card pool.");
         }
         return cards.poll();
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     /** 사보타지 공식 룰에 따라 카드풀을 생성한다. (길카드 44장, 행동카드 27장) */
