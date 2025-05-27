@@ -36,4 +36,9 @@ public class UserGameRoom extends BaseEntity {
     // private Boolean isReady = false;
 
     @CreatedDate private LocalDateTime joinedAt = LocalDateTime.now();
+
+    public UserGameRoom(GameRoom gameRoom, User user) {
+        this.gameRoom = gameRoom;
+        this.user = user;
+    }
 }
