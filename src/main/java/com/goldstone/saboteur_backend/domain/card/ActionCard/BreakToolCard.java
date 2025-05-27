@@ -7,28 +7,28 @@ import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 
 public class BreakToolCard extends ActionCard {
-    private TargetToolType breakTool;
+    private TargetToolType targetTool;
 
     public BreakToolCard(TargetToolType breakTool) {
-        this.breakTool = breakTool;
+        this.targetTool = breakTool;
     }
 
     @Override
     public void use(User targetUser) {
-        if (targetUser == null || breakTool == null) {
+        if (targetUser == null || targetTool == null) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
-        PlayerToolStatus playerToolStatus = targetUser.getToolStatusMap().get(breakTool);
+        PlayerToolStatus playerToolStatus = targetUser.getToolStatusMap().get(targetTool);
         if (playerToolStatus == PlayerToolStatus.BROKEN) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
-        targetUser.breakTool(breakTool);
+        targetUser.breakTool(targetTool);
     }
 
     @Override
     public boolean availableUse() {
-        return breakTool != null;
+        return targetTool != null;
     }
 }

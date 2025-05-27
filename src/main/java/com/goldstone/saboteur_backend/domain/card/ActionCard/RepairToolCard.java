@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class RepairToolCard extends ActionCard {
     private final Set<TargetToolType> repairableTools;
-    private TargetToolType selectedTool;
+    private TargetToolType targetTool;
 
     public RepairToolCard(Set<TargetToolType> repairableTools) {
         this.repairableTools = new HashSet<>(repairableTools);
@@ -20,25 +20,25 @@ public class RepairToolCard extends ActionCard {
         if (!repairableTools.contains(repairTool)) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
-        this.selectedTool = repairTool;
+        this.targetTool = repairTool;
     }
 
     @Override
     public void use(User targetUser) {
-        if (targetUser == null || selectedTool == null) {
+        if (targetUser == null || targetTool == null) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
-        PlayerToolStatus playerToolStatus = targetUser.getToolStatusMap().get(selectedTool);
+        PlayerToolStatus playerToolStatus = targetUser.getToolStatusMap().get(targetTool);
         if (playerToolStatus == PlayerToolStatus.FIXED) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
-        targetUser.repairTools(Set.of(selectedTool));
+        targetUser.repairTools(Set.of(targetTool));
     }
 
     @Override
     public boolean availableUse() {
-        return selectedTool != null;
+        return targetTool != null;
     }
 }
