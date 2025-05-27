@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.board.Cell;
+import com.goldstone.saboteur_backend.domain.card.ActionCard.BreakToolCard;
+import com.goldstone.saboteur_backend.domain.card.ActionCard.FallingRockCard;
+import com.goldstone.saboteur_backend.domain.card.ActionCard.MapCard;
+import com.goldstone.saboteur_backend.domain.card.ActionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.enums.*;
 import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.HashSet;
@@ -41,10 +45,12 @@ class ActionCardTest {
         repairTools.add(TargetToolType.LIGHT);
 
         RepairToolCard repairToolCard = new RepairToolCard(repairTools);
+
+        repairToolCard.selectTool(TargetToolType.CART);
         repairToolCard.use(user);
 
         assertEquals(PlayerToolStatus.FIXED, user.getToolStatusMap().get(TargetToolType.CART));
-        assertEquals(PlayerToolStatus.FIXED, user.getToolStatusMap().get(TargetToolType.LIGHT));
+        assertEquals(PlayerToolStatus.BROKEN, user.getToolStatusMap().get(TargetToolType.LIGHT));
     }
 
     @Test

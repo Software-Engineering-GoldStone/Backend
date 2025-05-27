@@ -37,11 +37,13 @@ public class PathCard extends Card {
         return pathCardType.getSides(rotated);
     }
 
-    @Override
-    void use() {}
 
     @Override
-    boolean availableUse() {
+    public void use() {
+    }
+
+    @Override
+    public boolean availableUse() {
         return false;
     }
 }
