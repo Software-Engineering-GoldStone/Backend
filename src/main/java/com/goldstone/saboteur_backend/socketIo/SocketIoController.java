@@ -3,30 +3,30 @@ package com.goldstone.saboteur_backend.socketIo;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
-import com.goldstone.saboteur_backend.domain.game.GameRoom;
-import com.goldstone.saboteur_backend.dtos.gameRoom.request.CreateGameRoomRequestDto;
+import com.goldstone.saboteur_backend.socketIo.eventRegister.SocketEventRegister;
+import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class SocketIoController {
     private final SocketIOServer server;
+    private final List<SocketEventRegister> registers;
 
-    /** 소켓 이벤트 리스너 등록 */
-    public SocketIoController(SocketIOServer server) {
-        this.server = server;
-
+    @PostConstruct
+    public void init() {
         // 소켓 이벤트 리스너 등록
         server.addConnectListener(listenConnected());
         server.addDisconnectListener(listenDisconnected());
 
-        server.addEventListener(
-                "createGameRoom",
-                CreateGameRoomRequestDto.class,
-                (client, data, ackSender) -> GameRoom.createGameRoom(client, data));
+        for (SocketEventRegister register : registers) {
+            register.registerEvents(server);
+        }
     }
 
     public ConnectListener listenConnected() {

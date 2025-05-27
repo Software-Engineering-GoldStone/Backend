@@ -36,8 +36,9 @@ public class GameSetting extends BaseEntity {
 
     private Integer minPlayers = 3;
 
-    public GameSetting(GameRoom gameRoom, String title, int maxPlayers, int minPlayers) {
+    public GameSetting(GameRoom gameRoom, User host, String title, int maxPlayers, int minPlayers) {
         this.gameRoom = gameRoom;
+        this.host = host;
         this.title = title;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;

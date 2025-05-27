@@ -8,6 +8,8 @@ import com.goldstone.saboteur_backend.domain.mapping.UserGameLog;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 import java.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
