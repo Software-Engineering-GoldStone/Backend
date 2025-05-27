@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseEntity {
-    @Id private UUID id = UUID.randomUUID(); // UUID는 JPA가 자동으로 생성해주지 않음
+    @Id private UUID id;
 
     private LocalDate birthDate;
 
@@ -40,6 +40,7 @@ public class User extends BaseEntity {
             new EnumMap<>(TargetToolType.class);
 
     public User(String nickname, LocalDate birthDate) {
+        this.id = UUID.randomUUID();
         this.nickname = nickname;
         this.birthDate = birthDate;
     }
