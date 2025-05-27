@@ -21,13 +21,12 @@ public class BreakToolCard extends ActionCard implements UsableOnUser {
         }
 
         PlayerToolStatus playerToolStatus = targetUser.getToolStatusMap().get(breakTool);
-        if(playerToolStatus==PlayerToolStatus.BROKEN){
+        if (playerToolStatus == PlayerToolStatus.BROKEN) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
         targetUser.breakTool(breakTool);
     }
-
 
     @Override
     public boolean availableUse() {

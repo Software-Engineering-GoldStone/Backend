@@ -22,7 +22,6 @@ public class MapCard extends ActionCard {
         return goalCard.getType();
     }
 
-
     @Override
     public boolean availableUse() {
         return targetCell != null;

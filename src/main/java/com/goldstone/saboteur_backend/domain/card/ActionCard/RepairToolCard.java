@@ -31,7 +31,7 @@ public class RepairToolCard extends ActionCard implements UsableOnUser {
         }
 
         PlayerToolStatus playerToolStatus = targetUser.getToolStatusMap().get(selectedTool);
-        if(playerToolStatus==PlayerToolStatus.FIXED){
+        if (playerToolStatus == PlayerToolStatus.FIXED) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
