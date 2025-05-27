@@ -2,6 +2,7 @@ package com.goldstone.saboteur_backend.service.gameRoom;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.goldstone.saboteur_backend.domain.board.Board;
+import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.CreateGameRoomRequestDto;
@@ -33,6 +34,10 @@ public class GameRoomServiceImpl implements GameRoomService {
 
         GameRoom gameRoom = GameRoom.createGameRoomByHost(host);
         this.globalSession.addGameRoomSession(gameRoom);
+
+        // 카드풀 생성 및 UUID 할당
+        GameCardPool cardPool = GameCardPool.createDefaultPool(gameRoom.getId());
+        this.globalSession.addGameCardPoolSession(gameRoom.getId(), cardPool);
 
         CreateGameRoomResponseDto responseDto = CreateGameRoomResponseDto.from(gameRoom);
 
@@ -79,6 +84,9 @@ public class GameRoomServiceImpl implements GameRoomService {
 
         gameRoom.startGame();
         this.globalSession.addGameBoardSession(gameRoom, new Board());
+
+        // 카드풀도 이미 세션에 등록되어 있어야 함 (생성시 등록됨)
+        // 필요시 카드풀 초기화/재설정 로직 추가
 
         this.socketIoService.sendBroadCast(gameRoom.getId(), "gameStarted", "Hello, game started!");
     }
