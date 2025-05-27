@@ -1,11 +1,14 @@
 package com.goldstone.saboteur_backend.domain.user;
 
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
+import com.goldstone.saboteur_backend.domain.enums.PlayerToolStatus;
+import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.enums.UserStatus;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameLog;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -34,10 +37,37 @@ public class User extends BaseEntity {
 
     @Transient private UserCardDeck cardDeck;
 
+    @Transient
+    private Map<TargetToolType, PlayerToolStatus> toolStatusMap =
+            new EnumMap<>(TargetToolType.class);
+
     public User(String nickname, LocalDate birthDate) {
         this.id = UUID.randomUUID();
         this.nickname = nickname;
         this.birthDate = birthDate;
+    }
+
+    public void initToolStatus() {
+        for (TargetToolType tool : TargetToolType.values()) {
+            toolStatusMap.put(tool, PlayerToolStatus.FIXED);
+        }
+    }
+
+    public boolean areAllToolsFixed() {
+        for (PlayerToolStatus staus : toolStatusMap.values()) {
+            if (staus != PlayerToolStatus.FIXED) return false;
+        }
+        return true;
+    }
+
+    public void breakTool(TargetToolType toolType) {
+        toolStatusMap.put(toolType, PlayerToolStatus.BROKEN);
+    }
+
+    public void repairTools(Set<TargetToolType> tools) {
+        for (TargetToolType tool : tools) {
+            toolStatusMap.put(tool, PlayerToolStatus.FIXED);
+        }
     }
 
     @Override
