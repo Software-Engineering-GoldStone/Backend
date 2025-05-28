@@ -12,12 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserCardDeck {
     private User user;
-<<<<<<< HEAD
-    private List<Card> cards;
-=======
 
     private List<Card> cards = new ArrayList<>();
->>>>>>> develop
 
     public boolean hasCard(Card card) {
         return cards.contains(card);

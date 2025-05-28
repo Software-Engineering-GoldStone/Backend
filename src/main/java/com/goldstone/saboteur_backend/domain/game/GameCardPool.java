@@ -5,22 +5,18 @@ import com.goldstone.saboteur_backend.domain.card.ActionCard.FallingRockCard;
 import com.goldstone.saboteur_backend.domain.card.ActionCard.MapCard;
 import com.goldstone.saboteur_backend.domain.card.ActionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.card.Card;
-<<<<<<< HEAD
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.enums.PathCardType;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
-import java.util.*;
-=======
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.exception.BusinessException;
-import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.CardPoolErrorCode;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
->>>>>>> develop
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,8 +28,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class GameCardPool {
-    @Setter
-    private UUID id;
+    @Setter private UUID id;
     private Queue<Card> cards = new LinkedList<>();
 
     public boolean isEmpty() {
@@ -47,7 +42,6 @@ public class GameCardPool {
         return cards.poll();
     }
 
-<<<<<<< HEAD
     /** 사보타지 공식 룰에 따라 카드풀을 생성한다. (길카드 44장, 행동카드 27장) */
     public static GameCardPool createDefaultPool(UUID poolId) {
         List<Card> cardList = new LinkedList<>();
@@ -83,7 +77,8 @@ public class GameCardPool {
         pool.setId(poolId);
         pool.cards = new LinkedList<>(cardList);
         return pool;
-=======
+    }
+
     public void shuffleCards() {
         if (cards.isEmpty()) {
             throw new BusinessException(CardPoolErrorCode.NO_CARDS_EXIST);
@@ -110,6 +105,5 @@ public class GameCardPool {
                 user.getCardDeck().getCards().addAll(cards);
             }
         }
->>>>>>> develop
     }
 }
