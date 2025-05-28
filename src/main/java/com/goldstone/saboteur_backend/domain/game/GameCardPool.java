@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class GameCardPool {
-    @Setter private UUID id;
+    private UUID id;
     private Queue<Card> cards = new LinkedList<>();
 
 
@@ -75,7 +75,7 @@ public class GameCardPool {
         Collections.shuffle(cardList);
 
         GameCardPool pool = new GameCardPool();
-        pool.setId(poolId);
+        pool.id = poolId;
         pool.cards = new LinkedList<>(cardList);
         return pool;
     }
