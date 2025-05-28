@@ -10,7 +10,7 @@ import com.goldstone.saboteur_backend.domain.enums.PathCardType;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.exception.BusinessException;
-import com.goldstone.saboteur_backend.exception.code.error.CardPoolErrorCode;
+import com.goldstone.saboteur_backend.exception.code.error.*;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class GameCardPool {
 
     public Card drawCard() {
         if (cards == null || cards.isEmpty()) {
-            throw new RuntimeException("No cards left in the card pool.");
+            throw new BusinessException(CardErrorCode.NO_CARDS_LEFT);
         }
         return cards.poll();
     }
