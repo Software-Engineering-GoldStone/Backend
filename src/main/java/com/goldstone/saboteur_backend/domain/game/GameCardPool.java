@@ -31,6 +31,7 @@ public class GameCardPool {
     @Setter private UUID id;
     private Queue<Card> cards = new LinkedList<>();
 
+
     public boolean isEmpty() {
         return cards == null || cards.isEmpty();
     }
