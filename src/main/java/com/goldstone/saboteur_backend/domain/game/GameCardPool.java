@@ -20,7 +20,6 @@ import java.util.Queue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Getter
@@ -101,5 +100,12 @@ public class GameCardPool {
                 user.getCardDeck().getCards().addAll(cards);
             }
         }
+    }
+
+    public static int getCardsPerPlayer(int playerCount) {
+        if (playerCount >= 3 && playerCount <= 5) return 6;
+        if (playerCount >= 6 && playerCount <= 7) return 5;
+        if (playerCount >= 8 && playerCount <= 10) return 4;
+        return 0;
     }
 }

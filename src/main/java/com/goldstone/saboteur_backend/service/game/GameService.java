@@ -26,7 +26,7 @@ public class GameService {
         this.userCardDecks = new HashMap<>();
 
         // 초기 카드 분배
-        int cardsPerPlayer = getCardsPerPlayer(userGameRooms.size());
+        int cardsPerPlayer = GameCardPool.getCardsPerPlayer(userGameRooms.size());
         for (UserGameRoom userGameRoom : userGameRooms) {
             User user = userGameRoom.getUser();
             List<Card> cards = new ArrayList<>();
@@ -35,13 +35,6 @@ public class GameService {
             }
             userCardDecks.put(user, new UserCardDeck(user, cards));
         }
-    }
-
-    private int getCardsPerPlayer(int playerCount) {
-        if (playerCount >= 3 && playerCount <= 5) return 6;
-        if (playerCount >= 6 && playerCount <= 7) return 5;
-        if (playerCount >= 8 && playerCount <= 10) return 4;
-        return 0;
     }
 
     // 카드 사용(또는 버림)
@@ -64,5 +57,4 @@ public class GameService {
         // 다음 플레이어로 이동
         return turnManager.nextTurn();
     }
-
 }

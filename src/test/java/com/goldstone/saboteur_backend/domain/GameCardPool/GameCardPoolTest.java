@@ -1,5 +1,7 @@
 package com.goldstone.saboteur_backend.domain.GameCardPool;
 
+import static org.assertj.core.api.Assertions.*;
+
 import com.goldstone.saboteur_backend.domain.card.ActionCard.BreakToolCard;
 import com.goldstone.saboteur_backend.domain.card.ActionCard.FallingRockCard;
 import com.goldstone.saboteur_backend.domain.card.ActionCard.MapCard;
@@ -7,15 +9,9 @@ import com.goldstone.saboteur_backend.domain.card.ActionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
-import com.goldstone.saboteur_backend.domain.enums.PathCardType;
-import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
-
-import org.junit.jupiter.api.Test;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class GameCardPoolTest {
 
@@ -36,7 +32,8 @@ class GameCardPoolTest {
         assertThat(breakCardCount).isEqualTo(9);
 
         // 수리 카드 수 (RepairToolCard)
-        long repairCardCount = cards.stream().filter(card -> card instanceof RepairToolCard).count();
+        long repairCardCount =
+                cards.stream().filter(card -> card instanceof RepairToolCard).count();
         assertThat(repairCardCount).isEqualTo(9);
 
         // 낙석 카드 수 (FallingRockCard)
@@ -56,20 +53,22 @@ class GameCardPoolTest {
         GameCardPool pool1 = GameCardPool.createDefaultPool(poolId1);
         GameCardPool pool2 = GameCardPool.createDefaultPool(poolId2);
 
-        List<String> pool1CardTypes = pool1.getCards().stream()
-                .map(card -> card.getClass().getSimpleName())
-                .collect(Collectors.toList());
+        List<String> pool1CardTypes =
+                pool1.getCards().stream()
+                        .map(card -> card.getClass().getSimpleName())
+                        .collect(Collectors.toList());
 
-        List<String> pool2CardTypes = pool2.getCards().stream()
-                .map(card -> card.getClass().getSimpleName())
-                .collect(Collectors.toList());
+        List<String> pool2CardTypes =
+                pool2.getCards().stream()
+                        .map(card -> card.getClass().getSimpleName())
+                        .collect(Collectors.toList());
 
         // 동일한 타입이라도 순서는 달라야 함
         assertThat(pool1CardTypes).isNotEqualTo(pool2CardTypes);
     }
 
     @Test
-    void drawCard_모든_카드_소진_후_예외처리(){
+    void drawCard_모든_카드_소진_후_예외처리() {
         GameCardPool pool = GameCardPool.createDefaultPool(UUID.randomUUID());
 
         for (int i = 0; i < 71; i++) {

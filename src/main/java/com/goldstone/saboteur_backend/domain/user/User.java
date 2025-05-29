@@ -91,6 +91,5 @@ public class User extends BaseEntity {
         this.status = UserStatus.DELETED;
     }
 
-    public void setCardDeck(UserCardDeck userCardDeck) {
-    }
+    public void setCardDeck(UserCardDeck userCardDeck) {}
 }
