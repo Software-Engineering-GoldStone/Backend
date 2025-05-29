@@ -8,7 +8,9 @@ import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.enums.PathCardType;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
+import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
+import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.*;
 import java.util.*;
@@ -71,7 +73,10 @@ public class GameCardPool {
         for (int i = 0; i < 6; i++) cardList.add(new MapCard());
 
         Collections.shuffle(cardList);
-        assert cardList.size() == 71 : "카드풀은 반드시 71장이어야 합니다.";
+        // 총 71장 검증
+        if (cardList.size() != 71) {
+            throw new IllegalStateException("카드풀이 71장으로 초기화되지 않았습니다.");
+        }
 
         GameCardPool pool = new GameCardPool();
         pool.id = poolId;
@@ -88,20 +93,19 @@ public class GameCardPool {
         cards = new LinkedList<>(cardList);
     }
 
-    public void assignCards(List<User> users, int cardsPerPlayer) {
-        if (cards.isEmpty()) {
-            throw new BusinessException(CardPoolErrorCode.NO_CARDS_EXIST);
-        }
-        for (User user : users) {
+    public Map<User, UserCardDeck> assignCardsToUserDecks(List<UserGameRoom> userGameRooms, int cardsPerPlayer) {
+        Map<User, UserCardDeck> userCardDecks = new HashMap<>();
+        for (UserGameRoom userGameRoom : userGameRooms) {
+            User user = userGameRoom.getUser();
             List<Card> cards = new ArrayList<>();
             for (int i = 0; i < cardsPerPlayer; i++) {
                 cards.add(this.drawCard());
             }
-            if (user.getCardDeck() != null && user.getCardDeck().getCards() != null) {
-                user.getCardDeck().getCards().addAll(cards);
-            }
+            userCardDecks.put(user, new UserCardDeck(user, cards));
         }
+        return userCardDecks;
     }
+
 
     public static int getCardsPerPlayer(int playerCount) {
         if (playerCount >= 3 && playerCount <= 5) return 6;
