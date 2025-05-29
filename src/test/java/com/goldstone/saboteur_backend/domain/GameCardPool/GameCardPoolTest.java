@@ -79,7 +79,7 @@ class GameCardPoolTest {
         // 72번째 draw 시 예외 발생
         assertThatThrownBy(pool::drawCard)
                 .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("No cards left");
+                .hasMessageContaining("남은 카드가 없습니다.");
     }
 
     @Test
