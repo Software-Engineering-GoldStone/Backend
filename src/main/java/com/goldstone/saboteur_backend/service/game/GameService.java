@@ -65,8 +65,4 @@ public class GameService {
         return turnManager.nextTurn();
     }
 
-    // 테스트에서 사용할 getter 메서드 추가
-    public Map<User, UserCardDeck> getUserCardDecks() {
-        return userCardDecks;
-    }
 }

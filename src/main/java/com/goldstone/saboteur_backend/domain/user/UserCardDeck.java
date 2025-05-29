@@ -20,9 +20,11 @@ public class UserCardDeck {
     }
 
     public boolean useCard(Card card) {
-        if (cards.contains(card)) {
-            cards.remove(card);
-            return true;
+        for (int i = 0; i < cards.size(); i++) {
+            if (cards.get(i).equals(card)) {
+                cards.remove(i);
+                return true;
+            }
         }
         return false;
     }

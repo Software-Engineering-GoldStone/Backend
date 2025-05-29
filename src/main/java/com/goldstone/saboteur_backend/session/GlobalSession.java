@@ -25,7 +25,7 @@ public class GlobalSession {
         try {
             return action.get();
         } catch (Exception e) {
-            System.err.println("Exception in void method: " + e.getMessage());
+            System.err.println("Exception in wrapperCall: " + e.getMessage());
             return null;
         }
     }
@@ -57,7 +57,6 @@ public class GlobalSession {
         return this.wrapperCall(() -> this.gameBoardSession.get(gameRoomId));
     }
 
-    // 카드풀 세션 관리
     public boolean addGameCardPoolSession(UUID gameRoomId, GameCardPool cardPool) {
         this.wrapperCall(() -> this.gameCardPoolSession.put(gameRoomId, cardPool));
         return true;

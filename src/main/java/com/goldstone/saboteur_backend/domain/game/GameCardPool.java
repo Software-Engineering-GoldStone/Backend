@@ -31,14 +31,13 @@ public class GameCardPool {
     private UUID id;
     private Queue<Card> cards = new LinkedList<>();
 
-
     public boolean isEmpty() {
         return cards == null || cards.isEmpty();
     }
 
     public Card drawCard() {
         if (cards == null || cards.isEmpty()) {
-            throw new BusinessException(CardErrorCode.NO_CARDS_LEFT);
+            throw new BusinessException(CardPoolErrorCode.NO_CARDS_EXIST);
         }
         return cards.poll();
     }
@@ -84,13 +83,9 @@ public class GameCardPool {
         if (cards.isEmpty()) {
             throw new BusinessException(CardPoolErrorCode.NO_CARDS_EXIST);
         }
-        try {
-            List<Card> cardList = new ArrayList<>(cards); // Queue -> List
-            Collections.shuffle(cardList);
-            cards = new LinkedList<>(cardList); // List -> Queue
-        } catch (Exception e) {
-            throw new BusinessException(CardPoolErrorCode.SHUFFLE_ERROR);
-        }
+        List<Card> cardList = new ArrayList<>(cards);
+        Collections.shuffle(cardList);
+        cards = new LinkedList<>(cardList);
     }
 
     public void assignCards(List<User> users, int cardsPerPlayer) {
