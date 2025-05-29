@@ -71,6 +71,7 @@ public class GameCardPool {
         for (int i = 0; i < 6; i++) cardList.add(new MapCard());
 
         Collections.shuffle(cardList);
+        assert cardList.size() == 71 : "카드풀은 반드시 71장이어야 합니다.";
 
         GameCardPool pool = new GameCardPool();
         pool.id = poolId;

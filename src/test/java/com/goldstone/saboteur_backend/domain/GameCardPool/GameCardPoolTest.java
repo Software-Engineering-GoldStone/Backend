@@ -11,6 +11,9 @@ import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.goldstone.saboteur_backend.exception.BusinessException;
+import com.goldstone.saboteur_backend.exception.code.error.CardPoolErrorCode;
 import org.junit.jupiter.api.Test;
 
 class GameCardPoolTest {
@@ -71,15 +74,17 @@ class GameCardPoolTest {
     void drawCard_모든_카드_소진_후_예외처리() {
         GameCardPool pool = GameCardPool.createDefaultPool(UUID.randomUUID());
 
+        // 모든 카드 소진
         for (int i = 0; i < 71; i++) {
-            pool.drawCard(); // 정상
+            pool.drawCard();
         }
 
         // 72번째 draw 시 예외 발생
         assertThatThrownBy(pool::drawCard)
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("남은 카드가 없습니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(CardPoolErrorCode.NO_CARDS_EXIST.getMessage());
     }
+
 
     @Test
     void shuffleCards_성공적으로_섞기() {

@@ -53,13 +53,6 @@ public class DeckTest {
         gameService = new GameService(userGameRooms, cardPool);
     }
 
-    private int getCardsPerPlayer(int playerCount) {
-        if (playerCount >= 3 && playerCount <= 5) return 6;
-        if (playerCount >= 6 && playerCount <= 7) return 5;
-        if (playerCount >= 8 && playerCount <= 10) return 4;
-        return 0;
-    }
-
     @ParameterizedTest(name = "카드풀/덱 관리 테스트 (playerCount={0})")
     @ValueSource(ints = {3, 5, 10})
     @DisplayName("카드풀/덱 관리가 턴마다 정상 동작하는지 검증")
@@ -67,7 +60,7 @@ public class DeckTest {
         prepareTestData(playerCount);
         Map<User, UserCardDeck> userCardDecks = getUserCardDecks(gameService);
 
-        int initialHandSize = getCardsPerPlayer(playerCount);
+        int initialHandSize = GameCardPool.getCardsPerPlayer(playerCount);
         for (User user : users) {
             UserCardDeck deck = userCardDecks.get(user);
             assertEquals(initialHandSize, deck.getCards().size(), "초기 손패 분배 확인");
