@@ -38,6 +38,7 @@ class GameRoomServiceTest {
     void createGameRoom() throws Exception {
         GameRoom gameRoom =
                 this.gameRoomService.createGameRoom(new CreateGameRoomRequestDto(host.getId()));
+        this.globalSession.addGameRoomSession(gameRoom);
         assertNotNull(gameRoom);
 
         GameRoom gameRoomFromSession = this.globalSession.getGameRoomSession(gameRoom.getId());
@@ -53,6 +54,7 @@ class GameRoomServiceTest {
 
         GameRoom gameRoom =
                 this.gameRoomService.createGameRoom(new CreateGameRoomRequestDto(host.getId()));
+        this.globalSession.addGameRoomSession(gameRoom);
 
         this.gameRoomService.joinGameRoom(
                 this.mockClient, new JoinGameRoomRequestDto(user.getId(), gameRoom.getId()));
@@ -73,6 +75,7 @@ class GameRoomServiceTest {
 
         GameRoom gameRoom =
                 this.gameRoomService.createGameRoom(new CreateGameRoomRequestDto(host.getId()));
+        this.globalSession.addGameRoomSession(gameRoom);
 
         // 9명의 유저까지 모두 입장 가능하다.
         for (int i = 0; i < 9; i++) {
