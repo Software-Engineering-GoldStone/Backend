@@ -7,7 +7,7 @@ import com.goldstone.saboteur_backend.dtos.gameRoom.request.JoinGameRoomRequestD
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.StartGameRequestDto;
 
 public interface GameRoomService {
-    GameRoom createGameRoom(SocketIOClient client, CreateGameRoomRequestDto dto) throws Exception;
+    GameRoom createGameRoom(CreateGameRoomRequestDto dto) throws Exception;
 
     void joinGameRoom(SocketIOClient client, JoinGameRoomRequestDto dto) throws Exception;
 
