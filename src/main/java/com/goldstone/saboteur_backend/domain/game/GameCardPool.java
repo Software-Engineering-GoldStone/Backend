@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class GameCardPool {
-    private UUID id;
+    private UUID GameRoomId;
     private Queue<Card> cards = new LinkedList<>();
 
     public boolean isEmpty() {
@@ -44,7 +44,7 @@ public class GameCardPool {
     }
 
     /** 사보타지 공식 룰에 따라 카드풀을 생성한다. (길카드 44장, 행동카드 27장) */
-    public static GameCardPool createDefaultPool(UUID poolId) {
+    public static GameCardPool createDefaultPool(UUID GameRoomId) {
         List<Card> cardList = new LinkedList<>();
 
         // 길카드 (예시: CROSSROAD 44장, 실제로는 다양한 PathCardType을 추가해야 함)
@@ -79,7 +79,7 @@ public class GameCardPool {
         }
 
         GameCardPool pool = new GameCardPool();
-        pool.id = poolId;
+        pool.GameRoomId = GameRoomId;
         pool.cards = new LinkedList<>(cardList);
         return pool;
     }
@@ -93,7 +93,8 @@ public class GameCardPool {
         cards = new LinkedList<>(cardList);
     }
 
-    public Map<User, UserCardDeck> assignCardsToUserDecks(List<UserGameRoom> userGameRooms, int cardsPerPlayer) {
+    public Map<User, UserCardDeck> assignCardsToUserDecks(
+            List<UserGameRoom> userGameRooms, int cardsPerPlayer) {
         Map<User, UserCardDeck> userCardDecks = new HashMap<>();
         for (UserGameRoom userGameRoom : userGameRooms) {
             User user = userGameRoom.getUser();
@@ -105,7 +106,6 @@ public class GameCardPool {
         }
         return userCardDecks;
     }
-
 
     public static int getCardsPerPlayer(int playerCount) {
         if (playerCount >= 3 && playerCount <= 5) return 6;

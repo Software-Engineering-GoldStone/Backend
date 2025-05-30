@@ -65,7 +65,7 @@ public class GameServiceTest {
     @DisplayName("초기 카드 분배 검증: 플레이어당 6장, 카드풀 잔여 53장")
     void testInitialCardDistribution() throws Exception {
         Map<User, UserCardDeck> userCardDecks = getUserCardDecks(gameService);
-        for (User user   : users) {
+        for (User user : users) {
             UserCardDeck deck = userCardDecks.get(user);
             assertNotNull(deck, "User의 cardDeck이 null이면 안 됨");
             assertFalse(deck.getCards().isEmpty(), "카드 덱이 비어있으면 안 됨");

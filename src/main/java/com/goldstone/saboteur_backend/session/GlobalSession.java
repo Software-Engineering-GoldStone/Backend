@@ -3,6 +3,7 @@ package com.goldstone.saboteur_backend.session;
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
+import com.goldstone.saboteur_backend.domain.game.GameTurnManager;
 import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.Map;
 import java.util.UUID;
@@ -20,6 +21,8 @@ public class GlobalSession {
     private final Map<UUID, Board> gameBoardSession = new ConcurrentHashMap<>();
     // Key: Game Room ID, 카드풀 세션 관리
     private final Map<UUID, GameCardPool> gameCardPoolSession = new ConcurrentHashMap<>();
+    // Key: Game Room Id, 게임 턴 관리
+    private final Map<UUID, GameTurnManager> turnManagerSessions = new ConcurrentHashMap<>();
 
     private <T> T wrapperCall(Supplier<T> action) {
         try {
@@ -64,5 +67,14 @@ public class GlobalSession {
 
     public GameCardPool getGameCardPoolSession(UUID gameRoomId) {
         return this.wrapperCall(() -> this.gameCardPoolSession.get(gameRoomId));
+    }
+
+    public boolean addTurnManagerSession(UUID gameRoomId, GameTurnManager turnManager) {
+        this.wrapperCall(() -> this.turnManagerSessions.put(gameRoomId, turnManager));
+        return true;
+    }
+
+    public GameTurnManager getTurnManagerSession(UUID gameRoomId) {
+        return this.wrapperCall(() -> this.turnManagerSessions.get(gameRoomId));
     }
 }

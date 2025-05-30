@@ -9,11 +9,10 @@ import com.goldstone.saboteur_backend.domain.card.ActionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardPoolErrorCode;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 class GameCardPoolTest {
@@ -84,7 +83,6 @@ class GameCardPoolTest {
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining(CardPoolErrorCode.NO_CARDS_EXIST.getMessage());
     }
-
 
     @Test
     void shuffleCards_성공적으로_섞기() {

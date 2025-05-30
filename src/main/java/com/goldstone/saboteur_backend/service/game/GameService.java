@@ -21,10 +21,9 @@ public class GameService {
     public GameService(List<UserGameRoom> userGameRooms, GameCardPool cardPool) {
         this.cardPool = cardPool;
         this.turnManager = new GameTurnManager(userGameRooms);
-        this.userCardDecks = cardPool.assignCardsToUserDecks(
-                userGameRooms,
-                GameCardPool.getCardsPerPlayer(userGameRooms.size())
-        );
+        this.userCardDecks =
+                cardPool.assignCardsToUserDecks(
+                        userGameRooms, GameCardPool.getCardsPerPlayer(userGameRooms.size()));
     }
 
     // 카드 사용(또는 버림)

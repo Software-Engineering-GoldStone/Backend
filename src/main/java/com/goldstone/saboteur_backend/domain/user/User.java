@@ -14,6 +14,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -35,7 +36,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<UserGameRoom> userGameRooms;
 
-    @Transient private UserCardDeck cardDeck = new UserCardDeck();
+    @Setter @Transient private UserCardDeck cardDeck = new UserCardDeck();
 
     @Transient
     private Map<TargetToolType, PlayerToolStatus> toolStatusMap =
@@ -90,6 +91,4 @@ public class User extends BaseEntity {
     public void deleteUser() {
         this.status = UserStatus.DELETED;
     }
-
-    public void setCardDeck(UserCardDeck userCardDeck) {}
 }
