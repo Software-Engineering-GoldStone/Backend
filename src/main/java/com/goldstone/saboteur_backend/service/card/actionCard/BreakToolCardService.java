@@ -32,6 +32,6 @@ public class BreakToolCardService {
                 target.getId(),
                 targetToolType,
                 target.getToolStatusMap().get(targetToolType),
-                target.getNickname() + "의 도구가 복구되었습니다.");
+                target.getNickname() + "의 도구가 파괴되었습니다.");
     }
 }

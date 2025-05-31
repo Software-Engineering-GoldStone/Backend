@@ -1,6 +1,7 @@
 package com.goldstone.saboteur_backend.service.card.actionCard;
 
 import com.goldstone.saboteur_backend.domain.card.Card;
+import com.goldstone.saboteur_backend.domain.card.actionCard.*;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
@@ -21,6 +22,9 @@ public class ActionCardService {
     public UseCardResponse useActionCard(UseCardRequest request) {
         User user = globalSession.getUserSession(request.getUserId());
         Card card = user.getCardDeck().getCardById(request.getCardId());
+        if (card == null) {
+            throw new IllegalArgumentException("카드 ID에 해당하는 카드가 존재하지 않습니다: " + request.getCardId());
+        }
 
         ActionCard actionCard = (ActionCard) card;
 
@@ -49,6 +53,7 @@ public class ActionCardService {
                 };
 
         user.getCardDeck().useCard(actionCard);
+
         return response;
     }
 }

@@ -28,7 +28,9 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -55,10 +57,20 @@ public class UserCardDeck {
         cards.add(card);
     }
 
+//    public Card getCardById(UUID cardId) {
+//        return cards.stream()
+//                .filter(card -> card.getCardId().equals(cardId))
+//                .findFirst()
+//                .orElse(null);
+//    }
+
     public Card getCardById(UUID cardId) {
-        return cards.stream()
-                .filter(card -> card.getCardId().equals(cardId))
-                .findFirst()
-                .orElse(null);
+        for (Card card : cards) {
+            if (cardId != null && cardId.equals(card.getCardId())) {
+                return card;
+            }
+        }
+        return null;
     }
+
 }

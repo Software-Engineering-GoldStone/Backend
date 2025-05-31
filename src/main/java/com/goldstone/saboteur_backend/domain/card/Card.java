@@ -13,7 +13,7 @@ public abstract class Card {
     protected UUID cardId;
 
     public Card() {
-        this.cardId = UUID.randomUUID();
+        //this.cardId = UUID.randomUUID();
     }
 
     public abstract CardType getCardType();

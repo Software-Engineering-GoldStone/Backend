@@ -7,8 +7,10 @@ import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class UseCardRequest {
     private UUID userId;
