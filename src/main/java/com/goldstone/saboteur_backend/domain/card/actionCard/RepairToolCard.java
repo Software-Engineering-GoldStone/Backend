@@ -1,16 +1,28 @@
-package com.goldstone.saboteur_backend.domain.card.ActionCard;
+package com.goldstone.saboteur_backend.domain.card.actionCard;
 
+import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
 import com.goldstone.saboteur_backend.domain.enums.PlayerToolStatus;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
+import java.util.HashSet;
+import java.util.Set;
 
-public class BreakToolCard extends ActionCard {
+public class RepairToolCard extends ActionCard {
+    private final Set<TargetToolType> repairableTools;
     private TargetToolType targetTool;
 
-    public BreakToolCard(TargetToolType breakTool) {
-        this.targetTool = breakTool;
+    public RepairToolCard(Set<TargetToolType> repairableTools) {
+        super(ActionCardType.REPAIR);
+        this.repairableTools = new HashSet<>(repairableTools);
+    }
+
+    public void selectTool(TargetToolType repairTool) {
+        if (!repairableTools.contains(repairTool)) {
+            throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
+        }
+        this.targetTool = repairTool;
     }
 
     @Override
@@ -20,11 +32,11 @@ public class BreakToolCard extends ActionCard {
         }
 
         PlayerToolStatus playerToolStatus = targetUser.getToolStatusMap().get(targetTool);
-        if (playerToolStatus == PlayerToolStatus.BROKEN) {
+        if (playerToolStatus == PlayerToolStatus.FIXED) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
-        targetUser.breakTool(targetTool);
+        targetUser.repairTools(Set.of(targetTool));
     }
 
     @Override

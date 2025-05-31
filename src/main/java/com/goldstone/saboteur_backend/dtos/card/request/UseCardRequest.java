@@ -1,0 +1,25 @@
+package com.goldstone.saboteur_backend.dtos.card.request;
+
+import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
+import com.goldstone.saboteur_backend.domain.enums.CardType;
+import com.goldstone.saboteur_backend.domain.enums.PathCardType;
+import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
+import java.util.UUID;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+public class UseCardRequest {
+    private UUID userId;
+    private UUID cardId;
+    private CardType cardType;
+    private ActionCardType actionCardType;
+    private PathCardType pathCardType;
+    private UUID targetUserId;
+    private int targetCellX;
+    private int targetCellY;
+    private TargetToolType selectedTool;
+    private UUID roomId;
+    private boolean rotated;
+}

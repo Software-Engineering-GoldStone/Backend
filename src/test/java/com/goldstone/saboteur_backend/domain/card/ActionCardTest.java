@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.board.Cell;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.BreakToolCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.FallingRockCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.MapCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.RepairToolCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.BreakToolCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.FallingRockCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.MapCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.enums.*;
 import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.HashSet;
