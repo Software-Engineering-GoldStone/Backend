@@ -7,25 +7,41 @@ import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class GameRoleAssignment {
     // NOTE: Pair { Saboteur Num, Miner Num }
-    private int[][] ROLE_CARD_PAIR = {
-        {0, 0}, {0, 0}, {0, 0}, {1, 3}, {1, 4}, {2, 4}, {2, 5}, {3, 5}, {3, 6}, {3, 7}, {4, 7}
+    private static final int[][] ROLE_CARD_PAIR = {
+        {0, 0}, {0, 0}, {0, 0}, {1, 2}, {1, 3}, {2, 3}, {2, 4}, {3, 4}, {3, 5}, {3, 6}, {4, 6}
     };
 
-    public List<UserGameRole> assignRoles(
-            GameRoom gameRoom, UserGameRoom userGameRoom, List<User> users, Integer round) {
-        List<UserGameRole> result = new ArrayList<>();
+    public static int[][] getRoleCardPair() {
+        return ROLE_CARD_PAIR;
+    }
 
-        int SABOTEUR_NUM = this.ROLE_CARD_PAIR[users.size()][0];
-        int MINER_NUM = this.ROLE_CARD_PAIR[users.size()][1];
+    /**
+     * 플레이어 수에 따라 사보타지/광부 역할을 무작위로 분배한다.
+     *
+     * @param gameRoom 게임방 객체
+     * @param userGameRooms 방에 참여한 UserGameRoom 리스트
+     * @param round 라운드 번호
+     * @return UserGameRole 리스트 (각 유저별 역할 할당)
+     */
+    public List<UserGameRole> assignRoles(
+            GameRoom gameRoom, List<UserGameRoom> userGameRooms, Integer round) {
+        List<UserGameRole> result = new ArrayList<>();
+        List<User> users = userGameRooms.stream().map(UserGameRoom::getUser).toList();
+
+        int playerCount = users.size();
+        if (playerCount < 3 || playerCount > 10) {
+            throw new IllegalArgumentException("Invalid player count: " + playerCount);
+        }
+
+        int SABOTEUR_NUM = getRoleCardPair()[playerCount][0];
+        int MINER_NUM = getRoleCardPair()[playerCount][1];
 
         List<GameRole> roles = new ArrayList<>();
         for (int i = 0; i < SABOTEUR_NUM; i++) roles.add(GameRole.SABOTEUR);
@@ -34,7 +50,9 @@ public class GameRoleAssignment {
         Collections.shuffle(roles);
 
         for (int i = 0; i < users.size(); i++) {
-            result.add(new UserGameRole(gameRoom, userGameRoom, users.get(i), roles.get(i), round));
+            result.add(
+                    new UserGameRole(
+                            gameRoom, userGameRooms.get(i), users.get(i), roles.get(i), round));
         }
 
         return result;

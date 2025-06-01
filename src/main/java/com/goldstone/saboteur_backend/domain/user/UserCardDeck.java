@@ -18,4 +18,18 @@ public class UserCardDeck {
     public boolean hasCard(Card card) {
         return cards.contains(card);
     }
+
+    public boolean useCard(Card card) {
+        for (int i = 0; i < cards.size(); i++) {
+            if (cards.get(i).equals(card)) {
+                cards.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addCard(Card card) {
+        cards.add(card);
+    }
 }

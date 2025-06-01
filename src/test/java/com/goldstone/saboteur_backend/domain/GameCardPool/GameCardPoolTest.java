@@ -1,82 +1,97 @@
 package com.goldstone.saboteur_backend.domain.GameCardPool;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
+import com.goldstone.saboteur_backend.domain.card.ActionCard.BreakToolCard;
+import com.goldstone.saboteur_backend.domain.card.ActionCard.FallingRockCard;
+import com.goldstone.saboteur_backend.domain.card.ActionCard.MapCard;
+import com.goldstone.saboteur_backend.domain.card.ActionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.card.Card;
-import com.goldstone.saboteur_backend.domain.card.GoldCard;
+import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
-import com.goldstone.saboteur_backend.domain.user.User;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import com.goldstone.saboteur_backend.exception.BusinessException;
+import com.goldstone.saboteur_backend.exception.code.error.CardPoolErrorCode;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("GameCardPool Test")
-public class GameCardPoolTest {
+class GameCardPoolTest {
 
-    private GameCardPool gameCardPool;
-    private List<Card> initialCards;
+    @Test
+    void createDefaultPool_생성된_카드_총합_확인() {
+        GameCardPool pool = GameCardPool.createDefaultPool(UUID.randomUUID());
+        List<Card> cards = new ArrayList<>(pool.getCards());
 
-    @BeforeEach
-    public void setUp() {
-        initialCards = new ArrayList<>();
-        for (int i = 0; i < 40; i++) {
-            initialCards.add(new GoldCard()); // 40개의 unique cards 생성
-        }
-        gameCardPool = new GameCardPool(new LinkedList<>(initialCards));
+        // 전체 카드 수
+        assertThat(cards.size()).isEqualTo(71);
+
+        // 길 카드 수 (PathCard)
+        long pathCardCount = cards.stream().filter(card -> card instanceof PathCard).count();
+        assertThat(pathCardCount).isEqualTo(44);
+
+        // 파괴 카드 수 (BreakToolCard)
+        long breakCardCount = cards.stream().filter(card -> card instanceof BreakToolCard).count();
+        assertThat(breakCardCount).isEqualTo(9);
+
+        // 수리 카드 수 (RepairToolCard)
+        long repairCardCount =
+                cards.stream().filter(card -> card instanceof RepairToolCard).count();
+        assertThat(repairCardCount).isEqualTo(9);
+
+        // 낙석 카드 수 (FallingRockCard)
+        long rockCardCount = cards.stream().filter(card -> card instanceof FallingRockCard).count();
+        assertThat(rockCardCount).isEqualTo(3);
+
+        // 지도 카드 수 (MapCard)
+        long mapCardCount = cards.stream().filter(card -> card instanceof MapCard).count();
+        assertThat(mapCardCount).isEqualTo(6);
     }
 
     @Test
-    @DisplayName("카드 shuffle 정상 작동 검증")
-    public void testShuffleCards() {
-        List<Card> previousShuffle = new ArrayList<>(gameCardPool.getCards());
-        for (int i = 0; i < 5; i++) {
-            gameCardPool.shuffleCards();
-            List<Card> currentShuffle = new ArrayList<>(gameCardPool.getCards());
+    void createDefaultPool_생성된_카드풀은_각각_다른순서() {
+        UUID poolId1 = UUID.randomUUID();
+        UUID poolId2 = UUID.randomUUID();
 
-            // 두 리스트가 순서, 내용(요소), 크기 중 하나라도 다르면 not equal
-            assertNotEquals(previousShuffle, currentShuffle, "shuffle 이후 cards의 순서가 바뀌어야 함.");
+        GameCardPool pool1 = GameCardPool.createDefaultPool(poolId1);
+        GameCardPool pool2 = GameCardPool.createDefaultPool(poolId2);
 
-            assertTrue(
-                    currentShuffle.containsAll(previousShuffle)
-                            && previousShuffle.containsAll(currentShuffle),
-                    "shuffle 이후의 카드 풀에 이전 shuffle의 카드 풀의 모든 카드(요소)가 포함되어야 함.");
+        List<String> pool1CardTypes =
+                pool1.getCards().stream()
+                        .map(card -> card.getClass().getSimpleName())
+                        .collect(Collectors.toList());
 
-            previousShuffle = currentShuffle;
-        }
+        List<String> pool2CardTypes =
+                pool2.getCards().stream()
+                        .map(card -> card.getClass().getSimpleName())
+                        .collect(Collectors.toList());
+
+        // 동일한 타입이라도 순서는 달라야 함
+        assertThat(pool1CardTypes).isNotEqualTo(pool2CardTypes);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {3, 4, 5, 6, 7})
-    @DisplayName("카드 분배 정상 작동 검증")
-    public void testAssignCards(int cardsPerPlayer) {
-        List<User> users = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            users.add(new User());
+    @Test
+    void drawCard_모든_카드_소진_후_예외처리() {
+        GameCardPool pool = GameCardPool.createDefaultPool(UUID.randomUUID());
+
+        // 모든 카드 소진
+        for (int i = 0; i < 71; i++) {
+            pool.drawCard();
         }
 
-        gameCardPool.assignCards(users, cardsPerPlayer);
+        // 72번째 draw 시 예외 발생
+        assertThatThrownBy(pool::drawCard)
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(CardPoolErrorCode.NO_CARDS_EXIST.getMessage());
+    }
 
-        for (User user : users) {
-            assertNotNull(user.getCardDeck(), "User의 card deck 은 not null 이어야 함.");
-            assertEquals(
-                    cardsPerPlayer,
-                    user.getCardDeck().getCards().size(),
-                    "각 User 는 cardsPerPlayer 개의 카드를 가져야 함.");
-        }
+    @Test
+    void shuffleCards_성공적으로_섞기() {
+        GameCardPool pool = GameCardPool.createDefaultPool(UUID.randomUUID());
+        List<Card> beforeShuffle = new ArrayList<>(pool.getCards());
 
-        // 각 user 의 카드 덱이 서로 다름을 검증
-        for (int i = 0; i < users.size(); i++) {
-            for (int j = i + 1; j < users.size(); j++) {
-                assertNotEquals(
-                        users.get(i).getCardDeck().getCards(),
-                        users.get(j).getCardDeck().getCards(),
-                        "각 User 의 카드 덱은 서로 달라야 함.");
-            }
-        }
+        pool.shuffleCards();
+        List<Card> afterShuffle = new ArrayList<>(pool.getCards());
+
+        assertThat(beforeShuffle).isNotEqualTo(afterShuffle);
     }
 }
