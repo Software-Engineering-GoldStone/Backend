@@ -31,6 +31,20 @@ import org.springframework.stereotype.Service;
 public class GameServiceImpl implements GameHandleService {
     @Autowired private final GlobalSession globalSession;
 
+    // 게임 종료 조건: 카드풀이 비었고, 모든 플레이어의 손패가 0장일 때만 true
+    private boolean isGameEnd(GameRoom gameRoom, GameCardPool cardPool) {
+        if (cardPool != null && !cardPool.isEmpty()) {
+            return false;
+        }
+        for (var ugr : gameRoom.getUserGameRooms()) {
+            UserCardDeck deck = ugr.getUser().getCardDeck();
+            if (deck != null && deck.getCards().size() > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public PlayCardResponseDto playCard(SocketIOClient client, PlayCardRequestDto dto)
             throws Exception {
@@ -57,6 +71,13 @@ public class GameServiceImpl implements GameHandleService {
                             .orElseThrow(() -> new Exception("카드를 찾을 수 없습니다."));
 
             boolean result = deck.useCard(card);
+
+            // [추가] 카드 사용 후 게임 종료 체크
+            GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());
+            boolean gameEnded = isGameEnd(gameRoom, cardPool);
+            if (gameEnded) {
+                client.sendEvent("gameEnded", "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
+            }
 
             PlayCardResponseDto responseDto =
                     new PlayCardResponseDto(
@@ -98,10 +119,13 @@ public class GameServiceImpl implements GameHandleService {
                 deck.addCard(cardPool.drawCard());
             }
 
+            // [추가] 턴 넘기기 후 게임 종료 체크
+            boolean gameEnded = isGameEnd(gameRoom, cardPool);
+
             User nextUser = turnManager.nextTurn();
 
             NextTurnResponseDto responseDto =
-                    new NextTurnResponseDto(nextUser.getId(), nextUser.getNickname(), false);
+                    new NextTurnResponseDto(nextUser.getId(), nextUser.getNickname(), gameEnded);
             client.sendEvent("turnChanged", responseDto);
             return responseDto;
         } catch (Exception e) {
@@ -118,7 +142,6 @@ public class GameServiceImpl implements GameHandleService {
             if (gameRoom == null) {
                 throw new Exception(GameRoomErrorCode.GAME_ROOM_NOT_FOUND.getMessage());
             }
-
             GameTurnManager turnManager = globalSession.getTurnManagerSession(dto.getGameRoomId());
             if (turnManager == null) {
                 throw new Exception("GameTurnManager를 찾을 수 없습니다.");
@@ -135,8 +158,8 @@ public class GameServiceImpl implements GameHandleService {
             List<UUID> myCardIds = new ArrayList<>();
             UUID myUserId = currentUser.getId();
 
-            for (var ugr : gameRoom.getUserGameRooms()) {
-                User user = ugr.getUser();
+            for (var userGameRoom : gameRoom.getUserGameRooms()) {
+                User user = userGameRoom.getUser();
                 UserCardDeck deck = user.getCardDeck();
                 playerCardCounts.put(user.getId(), deck != null ? deck.getCards().size() : 0);
                 if (user.getId().equals(myUserId) && deck != null) {
@@ -146,13 +169,18 @@ public class GameServiceImpl implements GameHandleService {
                 }
             }
 
+            // [추가] 게임 종료 여부도 응답에 포함(필요시)
+            boolean gameEnded = isGameEnd(gameRoom, cardPool);
+
             GetGameStateResponseDto responseDto =
                     new GetGameStateResponseDto(
                             currentUser.getId(),
                             currentUser.getNickname(),
                             playerCardCounts,
                             cardPool.getCards().size(),
-                            myCardIds);
+                            myCardIds
+                            //, gameEnded // 필요하다면 DTO에 필드 추가
+                    );
             client.sendEvent("gameState", responseDto);
             return responseDto;
         } catch (Exception e) {
@@ -187,6 +215,13 @@ public class GameServiceImpl implements GameHandleService {
                             .orElseThrow(() -> new Exception("카드를 찾을 수 없습니다."));
 
             boolean result = deck.useCard(card);
+
+            // [추가] 카드 버리기 후 게임 종료 체크
+            GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());
+            boolean gameEnded = isGameEnd(gameRoom, cardPool);
+            if (gameEnded) {
+                client.sendEvent("gameEnded", "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
+            }
 
             PlayCardResponseDto responseDto =
                     new PlayCardResponseDto(
