@@ -11,7 +11,6 @@ import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.CreateGameRoomRequestDto;
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.JoinGameRoomRequestDto;
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.StartGameRequestDto;
-import com.goldstone.saboteur_backend.dtos.gameRoom.response.CreateGameRoomResponseDto;
 import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
 import com.goldstone.saboteur_backend.session.GlobalSession;
@@ -30,24 +29,19 @@ public class GameRoomServiceImpl implements GameRoomService {
     private final SocketIoService socketIoService;
 
     @Override
-    public GameRoom createGameRoom(SocketIOClient client, CreateGameRoomRequestDto dto)
-            throws Exception {
+    public GameRoom createGameRoom(CreateGameRoomRequestDto dto) throws Exception {
         User host = this.globalSession.getUserSession(dto.getUserId());
         if (host == null) {
             throw new Exception(UserErrorCode.USER_NOT_FOUND.getMessage());
         }
 
         GameRoom gameRoom = GameRoom.createGameRoomByHost(host);
+
         this.globalSession.addGameRoomSession(gameRoom);
 
         // 카드풀 생성 및 UUID 할당
         GameCardPool cardPool = GameCardPool.createDefaultPool(gameRoom.getId());
         this.globalSession.addGameCardPoolSession(gameRoom.getId(), cardPool);
-
-        CreateGameRoomResponseDto responseDto = CreateGameRoomResponseDto.from(gameRoom);
-
-        client.joinRoom(gameRoom.getId().toString());
-        client.sendEvent("gameRoomCreated", responseDto);
 
         return gameRoom;
     }

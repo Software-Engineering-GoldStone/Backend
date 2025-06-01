@@ -48,14 +48,14 @@ public class GameCardPool {
         List<Card> cardList = new LinkedList<>();
 
         // 길카드 (예시: CROSSROAD 44장, 실제로는 다양한 PathCardType을 추가해야 함)
-        //for (int i = 0; i < 2; i++) {
-        //    cardList.add(new PathCard(PathCardType.CROSSROAD, false));
-        //}
+        for (int i = 0; i < 44; i++) {
+            cardList.add(new PathCard(PathCardType.CROSSROAD, false));
+        }
 
         // 도구 파괴 (각 3장씩)
-        //for (int i = 0; i < 3; i++) cardList.add(new BreakToolCard(TargetToolType.PICKAX));
-        //for (int i = 0; i < 3; i++) cardList.add(new BreakToolCard(TargetToolType.CART));
-        //for (int i = 0; i < 3; i++) cardList.add(new BreakToolCard(TargetToolType.LIGHT));
+        for (int i = 0; i < 3; i++) cardList.add(new BreakToolCard(TargetToolType.PICKAX));
+        for (int i = 0; i < 3; i++) cardList.add(new BreakToolCard(TargetToolType.CART));
+        for (int i = 0; i < 3; i++) cardList.add(new BreakToolCard(TargetToolType.LIGHT));
 
         // 도구 수리 (각 2장씩)
         for (int i = 0; i < 2; i++) cardList.add(new RepairToolCard(Set.of(TargetToolType.PICKAX)));
@@ -74,9 +74,9 @@ public class GameCardPool {
 
         Collections.shuffle(cardList);
         // 총 71장 검증
-        //if (cardList.size() != 71) {
-        //    throw new IllegalStateException("카드풀이 71장으로 초기화되지 않았습니다.");
-        //}
+        if (cardList.size() != 71) {
+            throw new IllegalStateException("카드풀이 71장으로 초기화되지 않았습니다.");
+        }
 
         GameCardPool pool = new GameCardPool();
         pool.GameRoomId = GameRoomId;

@@ -61,7 +61,8 @@ public class GameServiceImpl implements GameHandleService {
         // 3. 플레이어 카드덱 재분배
         List<UserGameRoom> userGameRooms = gameRoom.getUserGameRooms();
         Map<User, UserCardDeck> userCardDecks =
-                newCardPool.assignCardsToUserDecks(userGameRooms, GameCardPool.getCardsPerPlayer(userGameRooms.size()));
+                newCardPool.assignCardsToUserDecks(
+                        userGameRooms, GameCardPool.getCardsPerPlayer(userGameRooms.size()));
         for (User user : userCardDecks.keySet()) {
             user.setCardDeck(userCardDecks.get(user));
         }
@@ -70,17 +71,9 @@ public class GameServiceImpl implements GameHandleService {
     // 게임 종료 및 초기화 알림을 방 전체에 브로드캐스트
     private void broadcastGameEndedAndRestart(GameRoom gameRoom, String resultMessage) {
         // 1. 모든 유저에게 게임 종료 알림 (결과 메시지 포함)
-        socketIoService.sendBroadCast(
-                gameRoom.getId(),
-                "gameEnded",
-                resultMessage
-        );
+        socketIoService.sendBroadCast(gameRoom.getId(), "gameEnded", resultMessage);
         // 2. 모든 유저에게 새 라운드 시작 알림
-        socketIoService.sendBroadCast(
-                gameRoom.getId(),
-                "gameStarted",
-                "새 라운드가 시작되었습니다!"
-        );
+        socketIoService.sendBroadCast(gameRoom.getId(), "gameStarted", "새 라운드가 시작되었습니다!");
     }
 
     @Override
@@ -222,8 +215,8 @@ public class GameServiceImpl implements GameHandleService {
                             playerCardCounts,
                             cardPool.getCards().size(),
                             myCardIds
-                            //, gameEnded // 필요하다면 DTO에 필드 추가
-                    );
+                            // , gameEnded // 필요하다면 DTO에 필드 추가
+                            );
             client.sendEvent("gameState", responseDto);
             return responseDto;
         } catch (Exception e) {
