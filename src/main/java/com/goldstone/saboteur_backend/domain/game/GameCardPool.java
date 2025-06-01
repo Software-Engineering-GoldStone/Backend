@@ -48,9 +48,9 @@ public class GameCardPool {
         List<Card> cardList = new LinkedList<>();
 
         // 길카드 (예시: CROSSROAD 44장, 실제로는 다양한 PathCardType을 추가해야 함)
-        for (int i = 0; i < 2; i++) {
-            cardList.add(new PathCard(PathCardType.CROSSROAD, false));
-        }
+        //for (int i = 0; i < 2; i++) {
+        //    cardList.add(new PathCard(PathCardType.CROSSROAD, false));
+        //}
 
         // 도구 파괴 (각 3장씩)
         //for (int i = 0; i < 3; i++) cardList.add(new BreakToolCard(TargetToolType.PICKAX));

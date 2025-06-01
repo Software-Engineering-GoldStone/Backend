@@ -5,6 +5,7 @@ import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.game.GameTurnManager;
+import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
 import com.goldstone.saboteur_backend.dtos.game.request.DiscardCardRequestDto;
@@ -17,6 +18,7 @@ import com.goldstone.saboteur_backend.dtos.game.response.PlayCardResponseDto;
 import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
 import com.goldstone.saboteur_backend.session.GlobalSession;
+import com.goldstone.saboteur_backend.socketIo.SocketIoService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,19 +32,55 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameHandleService {
     @Autowired private final GlobalSession globalSession;
+    private final SocketIoService socketIoService;
 
     // 게임 종료 조건: 카드풀이 비었고, 모든 플레이어의 손패가 0장일 때만 true
     private boolean isGameEnd(GameRoom gameRoom, GameCardPool cardPool) {
         if (cardPool != null && !cardPool.isEmpty()) {
             return false;
         }
-        for (var ugr : gameRoom.getUserGameRooms()) {
-            UserCardDeck deck = ugr.getUser().getCardDeck();
-            if (deck != null && deck.getCards().size() > 0) {
+        for (var userGameRoom : gameRoom.getUserGameRooms()) {
+            UserCardDeck deck = userGameRoom.getUser().getCardDeck();
+            if (deck != null && !deck.getCards().isEmpty()) {
                 return false;
             }
         }
         return true;
+    }
+
+    // 카드풀/턴매니저/카드덱만 초기화(게임방과 유저는 유지)
+    private void resetCardPoolAndRestart(GameRoom gameRoom, UUID gameRoomId) {
+        // 1. 카드풀 새로 생성 및 등록
+        GameCardPool newCardPool = GameCardPool.createDefaultPool(gameRoomId);
+        globalSession.addGameCardPoolSession(gameRoomId, newCardPool);
+
+        // 2. 턴매니저 새로 생성 및 등록
+        GameTurnManager newTurnManager = new GameTurnManager(gameRoom.getUserGameRooms());
+        globalSession.addTurnManagerSession(gameRoomId, newTurnManager);
+
+        // 3. 플레이어 카드덱 재분배
+        List<UserGameRoom> userGameRooms = gameRoom.getUserGameRooms();
+        Map<User, UserCardDeck> userCardDecks =
+                newCardPool.assignCardsToUserDecks(userGameRooms, GameCardPool.getCardsPerPlayer(userGameRooms.size()));
+        for (User user : userCardDecks.keySet()) {
+            user.setCardDeck(userCardDecks.get(user));
+        }
+    }
+
+    // 게임 종료 및 초기화 알림을 방 전체에 브로드캐스트
+    private void broadcastGameEndedAndRestart(GameRoom gameRoom, String resultMessage) {
+        // 1. 모든 유저에게 게임 종료 알림 (결과 메시지 포함)
+        socketIoService.sendBroadCast(
+                gameRoom.getId(),
+                "gameEnded",
+                resultMessage
+        );
+        // 2. 모든 유저에게 새 라운드 시작 알림
+        socketIoService.sendBroadCast(
+                gameRoom.getId(),
+                "gameStarted",
+                "새 라운드가 시작되었습니다!"
+        );
     }
 
     @Override
@@ -72,11 +110,13 @@ public class GameServiceImpl implements GameHandleService {
 
             boolean result = deck.useCard(card);
 
-            // [추가] 카드 사용 후 게임 종료 체크
+            // 카드 사용 후 게임 종료 체크
             GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());
             boolean gameEnded = isGameEnd(gameRoom, cardPool);
             if (gameEnded) {
-                client.sendEvent("gameEnded", "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
+                // 결과 메시지(추후 승패 등 추가 가능)
+                broadcastGameEndedAndRestart(gameRoom, "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
+                resetCardPoolAndRestart(gameRoom, dto.getGameRoomId());
             }
 
             PlayCardResponseDto responseDto =
@@ -119,8 +159,12 @@ public class GameServiceImpl implements GameHandleService {
                 deck.addCard(cardPool.drawCard());
             }
 
-            // [추가] 턴 넘기기 후 게임 종료 체크
+            // 턴 넘기기 후 게임 종료 체크
             boolean gameEnded = isGameEnd(gameRoom, cardPool);
+            if (gameEnded) {
+                broadcastGameEndedAndRestart(gameRoom, "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
+                resetCardPoolAndRestart(gameRoom, dto.getGameRoomId());
+            }
 
             User nextUser = turnManager.nextTurn();
 
@@ -169,7 +213,6 @@ public class GameServiceImpl implements GameHandleService {
                 }
             }
 
-            // [추가] 게임 종료 여부도 응답에 포함(필요시)
             boolean gameEnded = isGameEnd(gameRoom, cardPool);
 
             GetGameStateResponseDto responseDto =
@@ -216,11 +259,12 @@ public class GameServiceImpl implements GameHandleService {
 
             boolean result = deck.useCard(card);
 
-            // [추가] 카드 버리기 후 게임 종료 체크
+            // 카드 버리기 후 게임 종료 체크
             GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());
             boolean gameEnded = isGameEnd(gameRoom, cardPool);
             if (gameEnded) {
-                client.sendEvent("gameEnded", "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
+                broadcastGameEndedAndRestart(gameRoom, "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
+                resetCardPoolAndRestart(gameRoom, dto.getGameRoomId());
             }
 
             PlayCardResponseDto responseDto =
