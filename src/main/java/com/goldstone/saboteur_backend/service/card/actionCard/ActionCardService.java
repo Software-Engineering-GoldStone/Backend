@@ -5,6 +5,8 @@ import com.goldstone.saboteur_backend.domain.card.actionCard.*;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
+import com.goldstone.saboteur_backend.exception.BusinessException;
+import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,10 +23,16 @@ public class ActionCardService {
 
     public UseCardResponse useActionCard(UseCardRequest request) {
         User user = globalSession.getUserSession(request.getUserId());
-        Card card = user.getCardDeck().getCardById(request.getCardId());
-        if (card == null) {
-            throw new IllegalArgumentException("카드 ID에 해당하는 카드가 존재하지 않습니다: " + request.getCardId());
-        }
+        //Card card = user.getCardDeck().getCardById(request.getCardId());
+
+        Card card = user.getCardDeck().getCards().stream()
+                .filter(c -> c.getId().equals(request.getCardId()))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_ACTION_CARD));
+
+//        if (card == null) {
+//            throw new IllegalArgumentException("카드 ID에 해당하는 카드가 존재하지 않습니다: " + request.getCardId());
+//        }
 
         ActionCard actionCard = (ActionCard) card;
 

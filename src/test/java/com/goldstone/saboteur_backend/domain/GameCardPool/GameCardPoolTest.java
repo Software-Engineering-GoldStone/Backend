@@ -2,10 +2,10 @@ package com.goldstone.saboteur_backend.domain.GameCardPool;
 
 import static org.assertj.core.api.Assertions.*;
 
-import com.goldstone.saboteur_backend.domain.card.ActionCard.BreakToolCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.FallingRockCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.MapCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.RepairToolCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.BreakToolCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.FallingRockCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.MapCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;

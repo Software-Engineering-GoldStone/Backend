@@ -78,7 +78,13 @@ public class ActionCardServiceInitTest {
             }
         }
 
-        Card foundCard = sessionUser.getCardDeck().getCardById(cardId);
+        //Card foundCard = sessionUser.getCardDeck().getCardById(cardId);
+
+        Card foundCard = sessionUser.getCardDeck().getCards().stream()
+                .filter(c -> c.getCardId().equals(cardId))
+                .findFirst()
+                .orElse(null);
+
         System.out.println("Found card by ID: " + (foundCard != null ? foundCard.getCardId() : "null"));
     }
 }
