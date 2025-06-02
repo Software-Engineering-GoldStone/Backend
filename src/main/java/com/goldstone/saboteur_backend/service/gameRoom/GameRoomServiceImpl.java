@@ -44,7 +44,6 @@ public class GameRoomServiceImpl implements GameRoomService {
         this.globalSession.addGameCardPoolSession(gameRoom.getId(), cardPool);
 
         return gameRoom;
-
     }
 
     @Override
