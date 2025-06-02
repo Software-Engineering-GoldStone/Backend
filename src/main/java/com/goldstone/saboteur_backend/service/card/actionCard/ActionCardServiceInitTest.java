@@ -3,7 +3,6 @@ package com.goldstone.saboteur_backend.service.card.actionCard;
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.actionCard.BreakToolCard;
-import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class ActionCardServiceTest {
+public class ActionCardServiceInitTest {
 
     private final GlobalSession globalSession;
 
