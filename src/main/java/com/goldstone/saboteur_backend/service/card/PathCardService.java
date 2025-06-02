@@ -25,11 +25,12 @@ public class PathCardService {
         User user = globalSession.getUserSession(request.getUserId());
         Board board = globalSession.getGameBoardSession(request.getRoomId());
 
-        //Card card = user.getCardDeck().getCardById(request.getCardId());
-        Card card = user.getCardDeck().getCards().stream()
-                .filter(c -> c.getId().equals(request.getCardId()))
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_CARD_ID));
+        // Card card = user.getCardDeck().getCardById(request.getCardId());
+        Card card =
+                user.getCardDeck().getCards().stream()
+                        .filter(c -> c.getId().equals(request.getCardId()))
+                        .findFirst()
+                        .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_CARD_ID));
 
         PathCard pathCard = (PathCard) card;
 

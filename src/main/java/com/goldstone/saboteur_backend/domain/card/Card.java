@@ -6,7 +6,6 @@ import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.UUID;
 
 @Getter
 @Setter

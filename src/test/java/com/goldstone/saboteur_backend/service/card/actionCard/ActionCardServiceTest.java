@@ -1,6 +1,7 @@
 package com.goldstone.saboteur_backend.service.card.actionCard;
 
-import com.goldstone.saboteur_backend.domain.card.Card;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.goldstone.saboteur_backend.domain.card.actionCard.BreakToolCard;
 import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
 import com.goldstone.saboteur_backend.domain.enums.CardType;
@@ -11,30 +12,21 @@ import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
 import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
 import com.goldstone.saboteur_backend.session.GlobalSession;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class ActionCardServiceTest {
 
-    @Autowired
-    private ActionCardService actionCardService;
+    @Autowired private ActionCardService actionCardService;
 
-    @Autowired
-    private GlobalSession session;
+    @Autowired private GlobalSession session;
 
     @Test
     void useActionCard() {
-        //카드를 사용할 유저 객체 생성 & 보유 도구 상태 초기화
+        // 카드를 사용할 유저 객체 생성 & 보유 도구 상태 초기화
         User user = new User();
         user.setId(UUID.randomUUID());
         user.initToolStatus();
@@ -58,7 +50,7 @@ class ActionCardServiceTest {
         session.addUserSession(user);
         session.addUserSession(targetUser);
 
-        //요청 객체 생성
+        // 요청 객체 생성
         UseCardRequest request = new UseCardRequest();
         request.setUserId(user.getId());
         request.setCardId(breakToolCard.getCardId());

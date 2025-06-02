@@ -23,16 +23,18 @@ public class ActionCardService {
 
     public UseCardResponse useActionCard(UseCardRequest request) {
         User user = globalSession.getUserSession(request.getUserId());
-        //Card card = user.getCardDeck().getCardById(request.getCardId());
+        // Card card = user.getCardDeck().getCardById(request.getCardId());
 
-        Card card = user.getCardDeck().getCards().stream()
-                .filter(c -> c.getId().equals(request.getCardId()))
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_CARD_ID));
+        Card card =
+                user.getCardDeck().getCards().stream()
+                        .filter(c -> c.getId().equals(request.getCardId()))
+                        .findFirst()
+                        .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_CARD_ID));
 
-//        if (card == null) {
-//            throw new IllegalArgumentException("카드 ID에 해당하는 카드가 존재하지 않습니다: " + request.getCardId());
-//        }
+        //        if (card == null) {
+        //            throw new IllegalArgumentException("카드 ID에 해당하는 카드가 존재하지 않습니다: " +
+        // request.getCardId());
+        //        }
 
         ActionCard actionCard = (ActionCard) card;
 
