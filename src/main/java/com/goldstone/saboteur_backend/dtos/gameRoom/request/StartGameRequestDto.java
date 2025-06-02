@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class StartGameRequestDto {
+    private UUID userId;
     private UUID gameRoomId;
 }

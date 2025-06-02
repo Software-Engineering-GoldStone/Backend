@@ -5,6 +5,8 @@ import com.goldstone.saboteur_backend.domain.enums.GameRoomStatus;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRole;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
+import com.goldstone.saboteur_backend.exception.BusinessException;
+import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +54,21 @@ public class GameRoom extends BaseEntity {
         return new GameRoom(host, "겁나 쩌는 게임", 10, 3);
     }
 
-    public boolean canStartGame() {
+    public void canStartGame(UUID userId) {
         Integer playerCount = this.userGameRooms.size();
         Integer minPlayers = this.setting.getMinPlayers();
         Integer maxPlayers = this.setting.getMaxPlayers();
+        boolean validPlayerCount = minPlayers <= playerCount && playerCount <= maxPlayers;
+        if (!validPlayerCount) {
+            throw new BusinessException(GameRoomErrorCode.CANNOT_START_GAME);
+        }
 
-        return minPlayers <= playerCount && playerCount <= maxPlayers;
+        boolean matchHost = this.setting.getHost().getId().equals(userId);
+        boolean joinedHost =
+                this.getPlayers().stream().anyMatch(player -> player.getId().equals(userId));
+        if (!matchHost || !joinedHost) {
+            throw new BusinessException(GameRoomErrorCode.CANNOT_START_GAME_NOT_HOST);
+        }
     }
 
     public boolean canJoinGameRoom() {

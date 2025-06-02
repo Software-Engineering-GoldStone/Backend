@@ -73,10 +73,7 @@ public class GameRoomServiceImpl implements GameRoomService {
         if (gameRoom == null) {
             throw new BusinessException(GameRoomErrorCode.GAME_ROOM_NOT_FOUND);
         }
-        if (!gameRoom.canStartGame()) {
-            throw new BusinessException(GameRoomErrorCode.CANNOT_START_GAME);
-        }
-
+        gameRoom.canStartGame(dto.getUserId());
         gameRoom.startGame();
 
         // 보드 생성
