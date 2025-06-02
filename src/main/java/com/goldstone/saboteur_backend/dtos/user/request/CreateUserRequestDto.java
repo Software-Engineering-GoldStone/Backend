@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class CreateUserRequestDto {
-    private String username;
+    private String nickname;
     private LocalDate birthDate = LocalDate.now(); // 기본값을 현재 날짜로 설정
 }

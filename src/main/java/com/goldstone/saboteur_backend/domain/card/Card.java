@@ -6,14 +6,17 @@ import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.UUID;
 
 @Getter
 @Setter
 public abstract class Card {
+    private UUID id = UUID.randomUUID();
+
     protected UUID cardId;
 
     public Card() {
-        //this.cardId = UUID.randomUUID();
+        this.cardId = id;
     }
 
     public abstract CardType getCardType();

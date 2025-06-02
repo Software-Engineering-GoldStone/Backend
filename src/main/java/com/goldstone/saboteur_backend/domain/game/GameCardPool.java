@@ -12,12 +12,8 @@ import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
 import com.goldstone.saboteur_backend.exception.BusinessException;
-import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
-import com.goldstone.saboteur_backend.exception.code.error.CardPoolErrorCode;
-import java.util.ArrayList;
-import java.util.Collections;
-import com.goldstone.saboteur_backend.exception.code.error.*;
 import java.util.*;
+import com.goldstone.saboteur_backend.exception.code.error.CardPoolErrorCode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -45,34 +41,6 @@ public class GameCardPool {
             throw new BusinessException(CardPoolErrorCode.NO_CARDS_EXIST);
         }
         return cards.poll();
-    }
-
-    public void shuffleCards() {
-        if (cards.isEmpty()) {
-            throw new BusinessException(CardPoolErrorCode.NO_CARDS_EXIST);
-        }
-        try {
-            List<Card> cardList = new ArrayList<>(cards); // Queue -> List
-            Collections.shuffle(cardList);
-            cards = new LinkedList<>(cardList); // List -> Queue
-        } catch (Exception e) {
-            throw new BusinessException(CardPoolErrorCode.SHUFFLE_ERROR);
-        }
-    }
-
-    public void assignCards(List<User> users, int cardsPerPlayer) {
-        if (cards.isEmpty()) {
-            throw new BusinessException(CardPoolErrorCode.NO_CARDS_EXIST);
-        }
-        for (User user : users) {
-            List<Card> cards = new ArrayList<>();
-            for (int i = 0; i < cardsPerPlayer; i++) {
-                cards.add(this.drawCard());
-            }
-            if (user.getCardDeck() != null && user.getCardDeck().getCards() != null) {
-                user.getCardDeck().getCards().addAll(cards);
-            }
-        }
     }
 
     /** 사보타지 공식 룰에 따라 카드풀을 생성한다. (길카드 44장, 행동카드 27장) */
@@ -114,6 +82,15 @@ public class GameCardPool {
         pool.GameRoomId = GameRoomId;
         pool.cards = new LinkedList<>(cardList);
         return pool;
+    }
+
+    public void shuffleCards() {
+        if (cards.isEmpty()) {
+            throw new BusinessException(CardPoolErrorCode.NO_CARDS_EXIST);
+        }
+        List<Card> cardList = new ArrayList<>(cards);
+        Collections.shuffle(cardList);
+        cards = new LinkedList<>(cardList);
     }
 
     public Map<User, UserCardDeck> assignCardsToUserDecks(

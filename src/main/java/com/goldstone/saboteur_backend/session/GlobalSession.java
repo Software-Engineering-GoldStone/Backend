@@ -1,7 +1,9 @@
 package com.goldstone.saboteur_backend.session;
 
 import com.goldstone.saboteur_backend.domain.board.Board;
+import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
+import com.goldstone.saboteur_backend.domain.game.GameTurnManager;
 import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.Map;
 import java.util.UUID;
@@ -17,12 +19,16 @@ public class GlobalSession {
     private final Map<UUID, GameRoom> gameRoomSession = new ConcurrentHashMap<>();
     // Key: Game Room ID
     private final Map<UUID, Board> gameBoardSession = new ConcurrentHashMap<>();
+    // Key: Game Room ID, 카드풀 세션 관리
+    private final Map<UUID, GameCardPool> gameCardPoolSession = new ConcurrentHashMap<>();
+    // Key: Game Room Id, 게임 턴 관리
+    private final Map<UUID, GameTurnManager> turnManagerSessions = new ConcurrentHashMap<>();
 
     private <T> T wrapperCall(Supplier<T> action) {
         try {
             return action.get();
         } catch (Exception e) {
-            System.err.println("Exception in void method: " + e.getMessage());
+            System.err.println("Exception in wrapperCall: " + e.getMessage());
             return null;
         }
     }
@@ -52,5 +58,23 @@ public class GlobalSession {
 
     public Board getGameBoardSession(UUID gameRoomId) {
         return this.wrapperCall(() -> this.gameBoardSession.get(gameRoomId));
+    }
+
+    public boolean addGameCardPoolSession(UUID gameRoomId, GameCardPool cardPool) {
+        this.wrapperCall(() -> this.gameCardPoolSession.put(gameRoomId, cardPool));
+        return true;
+    }
+
+    public GameCardPool getGameCardPoolSession(UUID gameRoomId) {
+        return this.wrapperCall(() -> this.gameCardPoolSession.get(gameRoomId));
+    }
+
+    public boolean addTurnManagerSession(UUID gameRoomId, GameTurnManager turnManager) {
+        this.wrapperCall(() -> this.turnManagerSessions.put(gameRoomId, turnManager));
+        return true;
+    }
+
+    public GameTurnManager getTurnManagerSession(UUID gameRoomId) {
+        return this.wrapperCall(() -> this.turnManagerSessions.get(gameRoomId));
     }
 }

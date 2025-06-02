@@ -1,36 +1,12 @@
-// package com.goldstone.saboteur_backend.domain.user;
-//
-// import com.goldstone.saboteur_backend.domain.card.Card;
-// import java.util.List;
-// import lombok.AllArgsConstructor;
-// import lombok.Getter;
-// import lombok.NoArgsConstructor;
-//
-// @Getter
-// @AllArgsConstructor
-// @NoArgsConstructor
-// public class UserCardDeck {
-//    private User user;
-//
-//    private List<Card> cards;
-//
-//    public boolean hasCard(Card card) {
-//        return cards.contains(card);
-//    }
-// }
-
 package com.goldstone.saboteur_backend.domain.user;
 
 import com.goldstone.saboteur_backend.domain.card.Card;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -56,21 +32,4 @@ public class UserCardDeck {
     public void addCard(Card card) {
         cards.add(card);
     }
-
-//    public Card getCardById(UUID cardId) {
-//        return cards.stream()
-//                .filter(card -> card.getCardId().equals(cardId))
-//                .findFirst()
-//                .orElse(null);
-//    }
-
-    public Card getCardById(UUID cardId) {
-        for (Card card : cards) {
-            if (cardId != null && cardId.equals(card.getCardId())) {
-                return card;
-            }
-        }
-        return null;
-    }
-
 }
