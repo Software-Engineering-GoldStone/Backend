@@ -29,7 +29,7 @@ public class PathCardService {
         Card card = user.getCardDeck().getCards().stream()
                 .filter(c -> c.getId().equals(request.getCardId()))
                 .findFirst()
-                .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_PATH_CARD));
+                .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_CARD_ID));
 
         PathCard pathCard = (PathCard) card;
 
