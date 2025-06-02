@@ -40,10 +40,6 @@ public class GameRoomServiceImpl implements GameRoomService {
 
         this.globalSession.addGameRoomSession(gameRoom);
 
-        // 카드풀 생성 및 UUID 할당
-        GameCardPool cardPool = GameCardPool.createDefaultPool(gameRoom.getId());
-        this.globalSession.addGameCardPoolSession(gameRoom.getId(), cardPool);
-
         return gameRoom;
     }
 
@@ -87,8 +83,11 @@ public class GameRoomServiceImpl implements GameRoomService {
         GameTurnManager turnManager = new GameTurnManager(gameRoom.getUserGameRooms());
         this.globalSession.addTurnManagerSession(gameRoom.getId(), turnManager);
 
+        // 카드풀 생성 및 UUID 할당
+        GameCardPool cardPool = GameCardPool.createDefaultPool(gameRoom.getId());
+        this.globalSession.addGameCardPoolSession(gameRoom.getId(), cardPool);
+
         // 카드 분배 로직
-        GameCardPool cardPool = this.globalSession.getGameCardPoolSession(dto.getGameRoomId());
         List<UserGameRoom> userGameRooms = gameRoom.getUserGameRooms();
 
         // 카드 분배

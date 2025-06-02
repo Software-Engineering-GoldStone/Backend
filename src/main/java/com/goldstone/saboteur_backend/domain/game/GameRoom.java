@@ -49,11 +49,7 @@ public class GameRoom extends BaseEntity {
     }
 
     public static GameRoom createGameRoomByHost(User host) {
-        GameRoom gameRoom = new GameRoom(host, "겁나 쩌는 게임", 10, 3);
-        UserGameRoom userGameRoom = new UserGameRoom(gameRoom, host);
-
-        gameRoom.userGameRooms.add(userGameRoom);
-        return gameRoom;
+        return new GameRoom(host, "겁나 쩌는 게임", 10, 3);
     }
 
     public boolean canStartGame() {

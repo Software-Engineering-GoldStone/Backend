@@ -54,6 +54,7 @@ class GameRoomServiceTest {
 
         GameRoom gameRoom =
                 this.gameRoomService.createGameRoom(new CreateGameRoomRequestDto(host.getId()));
+        this.gameRoomService.joinGameRoom(this.mockClient, new JoinGameRoomRequestDto(host.getId(), gameRoom.getId()));
         this.globalSession.addGameRoomSession(gameRoom);
 
         this.gameRoomService.joinGameRoom(
@@ -75,6 +76,7 @@ class GameRoomServiceTest {
 
         GameRoom gameRoom =
                 this.gameRoomService.createGameRoom(new CreateGameRoomRequestDto(host.getId()));
+        this.gameRoomService.joinGameRoom(this.mockClient, new JoinGameRoomRequestDto(host.getId(), gameRoom.getId()));
         this.globalSession.addGameRoomSession(gameRoom);
 
         // 9명의 유저까지 모두 입장 가능하다.
