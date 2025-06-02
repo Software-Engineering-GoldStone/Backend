@@ -4,11 +4,13 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.JoinGameRoomRequestDto;
 import com.goldstone.saboteur_backend.dtos.gameRoom.request.StartGameRequestDto;
+import com.goldstone.saboteur_backend.dtos.gameRoom.response.GameRoomInfoResponseDto;
 import com.goldstone.saboteur_backend.dtos.gameRoom.response.JoinGameRoomResponseDto;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.ErrorCode;
 import com.goldstone.saboteur_backend.exception.responseDto.ErrorResponse;
 import com.goldstone.saboteur_backend.service.gameRoom.GameRoomService;
+import com.goldstone.saboteur_backend.socketIo.SocketIoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GameRoomEventRegister implements SocketEventRegister {
     private final GameRoomService gameRoomService;
+    private final SocketIoService socketIoService;
 
     @Override
     public void registerEvents(SocketIOServer server) {
@@ -39,6 +42,22 @@ public class GameRoomEventRegister implements SocketEventRegister {
         server.addEventListener(
                 "startGame",
                 StartGameRequestDto.class,
-                (client, data, ackSender) -> this.gameRoomService.startGame(data));
+                (client, data, ackSender) -> {
+                    try {
+                        GameRoom gameRoom = this.gameRoomService.startGame(data);
+
+                        this.socketIoService.sendBroadCast(
+                                gameRoom.getId(),
+                                "gameStarted",
+                                GameRoomInfoResponseDto.from(gameRoom));
+                    } catch (Exception e) {
+                        if (e instanceof BusinessException) {
+                            ErrorCode errorCode = ((BusinessException) e).getErrorCode();
+                            client.sendEvent("errorEvent", new ErrorResponse(errorCode));
+                        } else {
+                            client.sendEvent("errorEvent", ErrorResponse.internalServerError());
+                        }
+                    }
+                });
     }
 }

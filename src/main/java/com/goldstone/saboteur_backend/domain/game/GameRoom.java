@@ -65,12 +65,12 @@ public class GameRoom extends BaseEntity {
     }
 
     public void startGame() {
-        this.status = GameRoomStatus.PLAYING;
+        this.changeStatus(GameRoomStatus.PLAYING);
     }
 
     /** NOTE: Game이 종료되면 id + 1인 같은 속성을 가진 새로운 게임 객체를 생성하고, 그 객체에서 게임을 진행할 수 있도록 한다. */
     public void endGame() {
-        this.status = GameRoomStatus.END;
+        this.changeStatus(GameRoomStatus.END);
         // 필요에 따라 추가 로직 필요.
     }
 

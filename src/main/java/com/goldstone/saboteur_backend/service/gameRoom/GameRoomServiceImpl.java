@@ -68,18 +68,21 @@ public class GameRoomServiceImpl implements GameRoomService {
         return gameRoom;
     }
 
-    public void startGame(StartGameRequestDto dto) throws Exception {
+    public GameRoom startGame(StartGameRequestDto dto) {
         GameRoom gameRoom = this.globalSession.getGameRoomSession(dto.getGameRoomId());
         if (gameRoom == null) {
-            throw new Exception(GameRoomErrorCode.GAME_ROOM_NOT_FOUND.getMessage());
+            throw new BusinessException(GameRoomErrorCode.GAME_ROOM_NOT_FOUND);
         }
         if (!gameRoom.canStartGame()) {
-            throw new Exception(GameRoomErrorCode.CANNOT_START_GAME.getMessage());
+            throw new BusinessException(GameRoomErrorCode.CANNOT_START_GAME);
         }
 
         gameRoom.startGame();
+
+        // 보드 생성
         this.globalSession.addGameBoardSession(gameRoom, new Board());
 
+        // 턴 매니저 생성
         GameTurnManager turnManager = new GameTurnManager(gameRoom.getUserGameRooms());
         this.globalSession.addTurnManagerSession(gameRoom.getId(), turnManager);
 
@@ -87,18 +90,16 @@ public class GameRoomServiceImpl implements GameRoomService {
         GameCardPool cardPool = GameCardPool.createDefaultPool(gameRoom.getId());
         this.globalSession.addGameCardPoolSession(gameRoom.getId(), cardPool);
 
-        // 카드 분배 로직
-        List<UserGameRoom> userGameRooms = gameRoom.getUserGameRooms();
-
         // 카드 분배
+        List<UserGameRoom> userGameRooms = gameRoom.getUserGameRooms();
+        int cardPerPlayer = GameCardPool.getCardsPerPlayer(userGameRooms.size());
         Map<User, UserCardDeck> userCardDecks =
-                cardPool.assignCardsToUserDecks(
-                        userGameRooms, GameCardPool.getCardsPerPlayer(userGameRooms.size()));
+                cardPool.assignCardsToUserDecks(userGameRooms, cardPerPlayer);
 
         for (User user : userCardDecks.keySet()) {
             user.setCardDeck(userCardDecks.get(user));
         }
 
-        this.socketIoService.sendBroadCast(gameRoom.getId(), "gameStarted", "Hello, game started!");
+        return gameRoom;
     }
 }

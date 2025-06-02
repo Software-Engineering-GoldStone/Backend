@@ -11,5 +11,5 @@ public interface GameRoomService {
 
     GameRoom joinGameRoom(SocketIOClient client, JoinGameRoomRequestDto dto);
 
-    void startGame(StartGameRequestDto dto) throws Exception;
+    GameRoom startGame(StartGameRequestDto dto);
 }
