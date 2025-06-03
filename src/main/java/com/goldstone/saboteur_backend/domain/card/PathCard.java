@@ -1,5 +1,6 @@
 package com.goldstone.saboteur_backend.domain.card;
 
+import com.goldstone.saboteur_backend.domain.enums.CardType;
 import com.goldstone.saboteur_backend.domain.enums.PathCardType;
 import com.goldstone.saboteur_backend.domain.enums.PathType;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,11 @@ public class PathCard extends Card {
 
     public PathType[] getSides() {
         return pathCardType.getSides(rotated);
+    }
+
+    @Override
+    public CardType getCardType() {
+        return CardType.PATH;
     }
 
     @Override

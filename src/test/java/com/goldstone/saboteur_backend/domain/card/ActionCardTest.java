@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.board.Cell;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.BreakToolCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.FallingRockCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.MapCard;
-import com.goldstone.saboteur_backend.domain.card.ActionCard.RepairToolCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.BreakToolCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.FallingRockCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.MapCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.enums.*;
 import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.HashSet;
@@ -32,23 +32,27 @@ class ActionCardTest {
 
     @Test
     void repairTool() {
+        // 유저 생성 후, 카트와 랜턴을 고장난 상태로 변경
         User user = new User();
         user.initToolStatus();
         user.breakTool(TargetToolType.CART);
         user.breakTool(TargetToolType.LIGHT);
 
+        // 카트와 랜턴이 고장난 상태인지 확인
         assertEquals(PlayerToolStatus.BROKEN, user.getToolStatusMap().get(TargetToolType.CART));
         assertEquals(PlayerToolStatus.BROKEN, user.getToolStatusMap().get(TargetToolType.LIGHT));
 
+        // 한 장으로 카트와 랜턴을 수리할 수 있는 카드 생성
         Set<TargetToolType> repairTools = new HashSet<>();
         repairTools.add(TargetToolType.CART);
         repairTools.add(TargetToolType.LIGHT);
-
         RepairToolCard repairToolCard = new RepairToolCard(repairTools);
 
+        // 게임 룰에 따라 수리할 도구를 하나만(카트) 선택
         repairToolCard.selectTool(TargetToolType.CART);
         repairToolCard.use(user);
 
+        // 선택한 카드만 수리되고 랜턴은 고장난 상태인지 확인
         assertEquals(PlayerToolStatus.FIXED, user.getToolStatusMap().get(TargetToolType.CART));
         assertEquals(PlayerToolStatus.BROKEN, user.getToolStatusMap().get(TargetToolType.LIGHT));
     }

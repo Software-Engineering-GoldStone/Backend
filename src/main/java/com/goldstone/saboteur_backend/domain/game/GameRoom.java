@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.*;
 
+@Setter
 @ToString
 @Getter
 @Entity

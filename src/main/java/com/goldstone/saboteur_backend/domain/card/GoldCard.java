@@ -1,5 +1,6 @@
 package com.goldstone.saboteur_backend.domain.card;
 
+import com.goldstone.saboteur_backend.domain.enums.CardType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GoldCard extends Card {
     private Integer amount;
+
+    @Override
+    public CardType getCardType() {
+        return null;
+    }
 
     @Override
     public void use() {}

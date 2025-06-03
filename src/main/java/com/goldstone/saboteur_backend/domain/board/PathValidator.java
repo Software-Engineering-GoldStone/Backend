@@ -2,7 +2,9 @@ package com.goldstone.saboteur_backend.domain.board;
 
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.enums.PathType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PathValidator {
 
     public static boolean canPlacePathCard(Cell cell, PathCard pathCard) {

@@ -1,15 +1,24 @@
 package com.goldstone.saboteur_backend.domain.card;
 
 import com.goldstone.saboteur_backend.domain.board.Cell;
+import com.goldstone.saboteur_backend.domain.enums.CardType;
 import com.goldstone.saboteur_backend.domain.user.User;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public abstract class Card {
     private UUID id = UUID.randomUUID();
 
-    public UUID getId() {
-        return id;
+    protected UUID cardId;
+
+    public Card() {
+        this.cardId = id;
     }
+
+    public abstract CardType getCardType();
 
     public void use() throws Exception {
         throw new Exception("기본 카드 타입은 대상 없는 사용을 지원하지 않습니다. 대상 객체를 명시하세요.");
