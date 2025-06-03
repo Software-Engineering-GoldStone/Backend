@@ -5,6 +5,8 @@ import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.game.GameTurnManager;
 import com.goldstone.saboteur_backend.domain.user.User;
+import com.goldstone.saboteur_backend.exception.BusinessException;
+import com.goldstone.saboteur_backend.exception.code.error.CommonErrorCode;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,8 +30,8 @@ public class GlobalSession {
         try {
             return action.get();
         } catch (Exception e) {
-            System.err.println("Exception in wrapperCall: " + e.getMessage());
-            return null;
+            System.err.println("Exception in GlobalSession wrapperCall:\n" + e);
+            throw new BusinessException(CommonErrorCode.FAILED_TO_MANIPULATE_GLOBAL_SESSION);
         }
     }
 

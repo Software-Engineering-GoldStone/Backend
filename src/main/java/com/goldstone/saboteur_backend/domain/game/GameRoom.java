@@ -5,6 +5,8 @@ import com.goldstone.saboteur_backend.domain.enums.GameRoomStatus;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRole;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
+import com.goldstone.saboteur_backend.exception.BusinessException;
+import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,32 +52,45 @@ public class GameRoom extends BaseEntity {
     }
 
     public static GameRoom createGameRoomByHost(User host) {
-        GameRoom gameRoom = new GameRoom(host, "겁나 쩌는 게임", 10, 3);
-        UserGameRoom userGameRoom = new UserGameRoom(gameRoom, host);
-
-        gameRoom.userGameRooms.add(userGameRoom);
-        return gameRoom;
+        return new GameRoom(host, "겁나 쩌는 게임", 10, 3);
     }
 
-    public boolean canStartGame() {
+    public void canStartGame(UUID userId) {
         Integer playerCount = this.userGameRooms.size();
         Integer minPlayers = this.setting.getMinPlayers();
         Integer maxPlayers = this.setting.getMaxPlayers();
+        boolean validPlayerCount = minPlayers <= playerCount && playerCount <= maxPlayers;
+        if (!validPlayerCount) {
+            throw new BusinessException(GameRoomErrorCode.CANNOT_START_GAME);
+        }
 
-        return minPlayers <= playerCount && playerCount <= maxPlayers;
+        boolean matchHost = this.setting.getHost().getId().equals(userId);
+        boolean joinedHost =
+                this.getPlayers().stream().anyMatch(player -> player.getId().equals(userId));
+        if (!matchHost || !joinedHost) {
+            throw new BusinessException(GameRoomErrorCode.CANNOT_START_GAME_NOT_HOST);
+        }
     }
 
-    public boolean canJoinGameRoom() {
-        return this.getUserGameRooms().size() < this.getSetting().getMaxPlayers();
+    public void checkJoinGameRoom(User user) {
+        if (userGameRooms.size() >= setting.getMaxPlayers()) {
+            throw new BusinessException(GameRoomErrorCode.CANNOT_JOIN_MAX_PLAYER);
+        }
+        if (this.status != GameRoomStatus.READY) {
+            throw new BusinessException(GameRoomErrorCode.CANNOT_JOIN_PLAYING_GAME_ROOM);
+        }
+        if (this.getPlayers().stream().anyMatch(player -> player.getId().equals(user.getId()))) {
+            throw new BusinessException(GameRoomErrorCode.ALREADY_JOINED_GAME_ROOM);
+        }
     }
 
     public void startGame() {
-        this.status = GameRoomStatus.PLAYING;
+        this.changeStatus(GameRoomStatus.PLAYING);
     }
 
     /** NOTE: Game이 종료되면 id + 1인 같은 속성을 가진 새로운 게임 객체를 생성하고, 그 객체에서 게임을 진행할 수 있도록 한다. */
     public void endGame() {
-        this.status = GameRoomStatus.END;
+        this.changeStatus(GameRoomStatus.END);
         // 필요에 따라 추가 로직 필요.
     }
 
