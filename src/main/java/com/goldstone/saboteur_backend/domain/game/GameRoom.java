@@ -71,8 +71,16 @@ public class GameRoom extends BaseEntity {
         }
     }
 
-    public boolean canJoinGameRoom() {
-        return this.getUserGameRooms().size() < this.getSetting().getMaxPlayers();
+    public void checkJoinGameRoom(User user) {
+        if (userGameRooms.size() >= setting.getMaxPlayers()) {
+            throw new BusinessException(GameRoomErrorCode.CANNOT_JOIN_MAX_PLAYER);
+        }
+        if (this.status != GameRoomStatus.READY) {
+            throw new BusinessException(GameRoomErrorCode.CANNOT_JOIN_PLAYING_GAME_ROOM);
+        }
+        if (this.getPlayers().stream().anyMatch(player -> player.getId().equals(user.getId()))) {
+            throw new BusinessException(GameRoomErrorCode.ALREADY_JOINED_GAME_ROOM);
+        }
     }
 
     public void startGame() {

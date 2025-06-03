@@ -54,13 +54,8 @@ public class GameRoomServiceImpl implements GameRoomService {
         if (gameRoom == null) {
             throw new BusinessException(GameRoomErrorCode.GAME_ROOM_NOT_FOUND);
         }
-        if (!gameRoom.canJoinGameRoom()) {
-            throw new BusinessException(GameRoomErrorCode.CANNOT_JOIN_MAX_PLAYER);
-        }
-        if (gameRoom.getPlayers().stream()
-                .anyMatch(player -> player.getId().equals(user.getId()))) {
-            throw new BusinessException(GameRoomErrorCode.ALREADY_JOINED_GAME_ROOM);
-        }
+
+        gameRoom.checkJoinGameRoom(user);
 
         gameRoom.addPlayer(user);
         client.joinRoom(gameRoom.getId().toString());
