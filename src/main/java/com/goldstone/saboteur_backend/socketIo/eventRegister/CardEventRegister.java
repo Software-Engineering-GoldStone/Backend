@@ -1,11 +1,10 @@
 package com.goldstone.saboteur_backend.socketIo.eventRegister;
 
 import com.corundumstudio.socketio.SocketIOServer;
-import com.goldstone.saboteur_backend.domain.enums.CardType;
-import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
+import com.goldstone.saboteur_backend.dtos.card.request.CellTargetCardRequest;
+import com.goldstone.saboteur_backend.dtos.card.request.PathCardRequest;
+import com.goldstone.saboteur_backend.dtos.card.request.UserTargetRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
-import com.goldstone.saboteur_backend.exception.BusinessException;
-import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 import com.goldstone.saboteur_backend.service.card.PathCardService;
 import com.goldstone.saboteur_backend.service.card.actionCard.ActionCardService;
 import com.goldstone.saboteur_backend.socketIo.SocketIoService;
@@ -21,23 +20,54 @@ public class CardEventRegister implements SocketEventRegister {
 
     @Override
     public void registerEvents(SocketIOServer server) {
+
+        // 1. 도구 파괴 카드 (DESTROY)
         server.addEventListener(
-                "useCard",
-                UseCardRequest.class,
+                "useBreakToolCard",
+                UserTargetRequest.class,
                 (client, request, ackSender) -> {
-                    UseCardResponse response;
-
-                    if (request.getCardType().equals(CardType.ACTION)) {
-                        response = actionCardService.useActionCard(request);
-                        System.out.println("[WebSocket] 도구 카드의 useCard 요청 수신");
-                    } else if (request.getCardType().equals(CardType.PATH)) {
-                        response = pathCardService.use(request);
-                        System.out.println("[WebSocket] 길 카드의 useCard 요청 수신");
-                    } else {
-                        throw new BusinessException(CardErrorCode.INVALID_CARD_TYPE);
-                    }
+                    UseCardResponse response = actionCardService.useActionCard(request);
                     socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
+                    ackSender.sendAckData(response);
+                });
 
+        // 2. 도구 수리 카드 (REPAIR)
+        server.addEventListener(
+                "useRepairToolCard",
+                UserTargetRequest.class,
+                (client, request, ackSender) -> {
+                    UseCardResponse response = actionCardService.useActionCard(request);
+                    socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
+                    ackSender.sendAckData(response);
+                });
+
+        // 3. 지도 카드 (MAP)
+        server.addEventListener(
+                "useMapCard",
+                CellTargetCardRequest.class,
+                (client, request, ackSender) -> {
+                    UseCardResponse response = actionCardService.useActionCard(request);
+                    socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
+                    ackSender.sendAckData(response);
+                });
+
+        // 4. 낙석 카드 (FALLING_ROCK)
+        server.addEventListener(
+                "useFallingRockCard",
+                CellTargetCardRequest.class,
+                (client, request, ackSender) -> {
+                    UseCardResponse response = actionCardService.useActionCard(request);
+                    socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
+                    ackSender.sendAckData(response);
+                });
+
+        // 5. 길카드 (PATH)
+        server.addEventListener(
+                "usePathCard",
+                PathCardRequest.class,
+                (client, request, ackSender) -> {
+                    UseCardResponse response = pathCardService.use(request);
+                    socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
                     ackSender.sendAckData(response);
                 });
     }

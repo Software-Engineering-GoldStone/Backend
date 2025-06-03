@@ -3,6 +3,8 @@ package com.goldstone.saboteur_backend.domain.user;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,5 +33,9 @@ public class UserCardDeck {
 
     public void addCard(Card card) {
         cards.add(card);
+    }
+
+    public Optional<Card> getCardById(UUID cardId) {
+        return cards.stream().filter(card -> card.getCardId().equals(cardId)).findFirst();
     }
 }

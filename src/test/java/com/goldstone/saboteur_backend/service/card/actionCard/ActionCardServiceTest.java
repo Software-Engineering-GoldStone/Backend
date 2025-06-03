@@ -9,7 +9,7 @@ import com.goldstone.saboteur_backend.domain.enums.PlayerToolStatus;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
-import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
+import com.goldstone.saboteur_backend.dtos.card.request.UserTargetRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import java.util.UUID;
@@ -51,7 +51,7 @@ class ActionCardServiceTest {
         session.addUserSession(targetUser);
 
         // 요청 객체 생성
-        UseCardRequest request = new UseCardRequest();
+        UserTargetRequest request = new UserTargetRequest();
         request.setUserId(user.getId());
         request.setCardId(breakToolCard.getCardId());
         request.setCardType(CardType.ACTION);

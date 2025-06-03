@@ -6,6 +6,7 @@ import com.goldstone.saboteur_backend.domain.board.PathValidator;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.user.User;
+import com.goldstone.saboteur_backend.dtos.card.request.PathCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
 import com.goldstone.saboteur_backend.exception.BusinessException;
@@ -25,7 +26,6 @@ public class PathCardService {
         User user = globalSession.getUserSession(request.getUserId());
         Board board = globalSession.getGameBoardSession(request.getRoomId());
 
-        // Card card = user.getCardDeck().getCardById(request.getCardId());
         Card card =
                 user.getCardDeck().getCards().stream()
                         .filter(c -> c.getId().equals(request.getCardId()))
@@ -34,8 +34,8 @@ public class PathCardService {
 
         PathCard pathCard = (PathCard) card;
 
-        int x = request.getTargetCellX();
-        int y = request.getTargetCellY();
+        int x = ((PathCardRequest) request).getTargetCellX();
+        int y = ((PathCardRequest) request).getTargetCellY();
         Cell targetCell = board.getOrCreateCell(x, y);
 
         if (!targetCell.isEmptyCard()) {

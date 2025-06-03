@@ -3,7 +3,9 @@ package com.goldstone.saboteur_backend.service.card.actionCard;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.actionCard.*;
 import com.goldstone.saboteur_backend.domain.user.User;
+import com.goldstone.saboteur_backend.dtos.card.request.CellTargetCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
+import com.goldstone.saboteur_backend.dtos.card.request.UserTargetRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
@@ -23,7 +25,6 @@ public class ActionCardService {
 
     public UseCardResponse useActionCard(UseCardRequest request) {
         User user = globalSession.getUserSession(request.getUserId());
-        // Card card = user.getCardDeck().getCardById(request.getCardId());
 
         Card card =
                 user.getCardDeck().getCards().stream()
@@ -31,36 +32,38 @@ public class ActionCardService {
                         .findFirst()
                         .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_CARD_ID));
 
-        //        if (card == null) {
-        //            throw new IllegalArgumentException("카드 ID에 해당하는 카드가 존재하지 않습니다: " +
-        // request.getCardId());
-        //        }
-
         ActionCard actionCard = (ActionCard) card;
 
-        UseCardResponse response =
-                switch (actionCard.getActionCardType()) {
-                    case DESTROY ->
-                            breakToolCardService.use(
-                                    (BreakToolCard) actionCard, request.getTargetUserId());
-                    case REPAIR ->
-                            repairToolCardService.use(
-                                    (RepairToolCard) actionCard,
-                                    request.getTargetUserId(),
-                                    request.getSelectedTool());
-                    case MAP ->
-                            mapCardService.use(
-                                    (MapCard) actionCard,
-                                    request.getRoomId(),
-                                    request.getTargetCellX(),
-                                    request.getTargetCellY());
-                    case FALLING_ROCK ->
-                            fallingRockCardService.use(
-                                    (FallingRockCard) actionCard,
-                                    request.getRoomId(),
-                                    request.getTargetCellX(),
-                                    request.getTargetCellY());
-                };
+        UseCardResponse response;
+
+        switch (actionCard.getActionCardType()) {
+            case DESTROY -> {
+                if (!(request instanceof UserTargetRequest breakReq)) {
+                    throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
+                }
+                response = breakToolCardService.use(breakReq);
+            }
+            case REPAIR -> {
+                if (!(request instanceof UserTargetRequest repairReq)) {
+                    throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
+                }
+                response = repairToolCardService.use(repairReq);
+            }
+            case MAP -> {
+                if (!(request instanceof CellTargetCardRequest mapReq)) {
+                    throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
+                }
+                response = mapCardService.use(mapReq);
+            }
+            case FALLING_ROCK -> {
+                if (!(request instanceof CellTargetCardRequest rockReq)) {
+                    throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
+                }
+                response = fallingRockCardService.use(rockReq);
+            }
+            default -> throw new BusinessException(CardErrorCode.INVALID_CARD_TYPE);
+        }
+        ;
 
         user.getCardDeck().useCard(actionCard);
 

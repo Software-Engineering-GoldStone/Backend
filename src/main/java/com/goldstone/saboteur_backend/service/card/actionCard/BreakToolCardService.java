@@ -1,13 +1,14 @@
 package com.goldstone.saboteur_backend.service.card.actionCard;
 
+import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.actionCard.BreakToolCard;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.user.User;
+import com.goldstone.saboteur_backend.dtos.card.request.UserTargetRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
 import com.goldstone.saboteur_backend.exception.BusinessException;
-import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
+import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 import com.goldstone.saboteur_backend.session.GlobalSession;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,21 +18,27 @@ public class BreakToolCardService {
 
     private final GlobalSession globalSession;
 
-    public UseCardResponse use(BreakToolCard card, UUID targetUserId) {
-        User target = globalSession.getUserSession(targetUserId);
+    public UseCardResponse use(UserTargetRequest request) {
+        User user = globalSession.getUserSession(request.getUserId());
+        User targetUser = globalSession.getUserSession(request.getTargetUserId());
 
-        if (target == null) {
-            throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
+        Card card =
+                user.getCardDeck()
+                        .getCardById(request.getCardId())
+                        .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_CARD_ID));
+
+        if (!(card instanceof BreakToolCard)) {
+            throw new BusinessException(CardErrorCode.INVALID_CARD_TYPE);
         }
 
-        card.use(target);
+        ((BreakToolCard) card).use(targetUser);
 
-        TargetToolType targetToolType = card.getTargetTool();
+        TargetToolType targetToolType = ((BreakToolCard) card).getTargetTool();
 
         return new UseCardResponse(
-                target.getId(),
+                targetUser.getId(),
                 targetToolType,
-                target.getToolStatusMap().get(targetToolType),
-                target.getNickname() + "의 도구가 파괴되었습니다.");
+                targetUser.getToolStatusMap().get(targetToolType),
+                targetUser.getNickname() + "의 도구가 파괴되었습니다.");
     }
 }
