@@ -91,9 +91,9 @@ public class Board {
         int dy = toCell.getY() - fromCell.getY();
 
         int direction = -1;
-        if (dx == 0 && dy == -1) direction = 0; // 위
+        if (dx == 0 && dy == 1) direction = 0; // 위
         else if (dx == 1 && dy == 0) direction = 1; // 오른쪽
-        else if (dx == 0 && dy == 1) direction = 2; // 아래
+        else if (dx == 0 && dy == -1) direction = 2; // 아래
         else if (dx == -1 && dy == 0) direction = 3; // 왼쪽
 
         if (direction == -1) return false; // 인접하지 않은 셀
