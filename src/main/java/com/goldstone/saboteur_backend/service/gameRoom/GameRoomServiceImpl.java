@@ -56,7 +56,8 @@ public class GameRoomServiceImpl implements GameRoomService {
         }
 
         if (gameRoom.getSetting().getHost() == null) {
-            System.out.println("[GameRoomServiceImpl] User: " + gameRoom.getSetting().getHost());
+            System.out.println("[PROTOTYPE] If host is not set, set user as host.");
+            System.out.println("[PROTOTYPE] User: " + gameRoom.getSetting().getHost());
             gameRoom.getSetting().setHost(user);
         }
 
