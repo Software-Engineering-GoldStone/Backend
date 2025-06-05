@@ -18,13 +18,14 @@ public class MapCard extends ActionCard {
     public GoalCardType peekDestinationCard(Cell cell) {
         targetCell = cell;
 
-        if (targetCell == null
-                || !(targetCell.getCard() instanceof GoalCard)
-                || targetCell.isEmptyCard()) {
+        if (targetCell == null || targetCell.isEmptyCard()) {
             throw new BusinessException(CardErrorCode.INVALID_GOAL_CARD);
         }
 
         GoalCard goalCard = (GoalCard) targetCell.getCard();
+        if (!(goalCard instanceof GoalCard)){
+            throw new BusinessException(CardErrorCode.INVALID_GOAL_CARD);
+        }
         return goalCard.getType();
     }
 
