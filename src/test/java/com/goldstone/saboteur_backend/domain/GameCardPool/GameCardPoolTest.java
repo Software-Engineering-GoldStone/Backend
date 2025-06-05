@@ -23,11 +23,11 @@ class GameCardPoolTest {
         List<Card> cards = new ArrayList<>(pool.getCards());
 
         // 전체 카드 수
-        assertThat(cards.size()).isEqualTo(71);
+        assertThat(cards.size()).isEqualTo(66);
 
         // 길 카드 수 (PathCard)
         long pathCardCount = cards.stream().filter(card -> card instanceof PathCard).count();
-        assertThat(pathCardCount).isEqualTo(44);
+        assertThat(pathCardCount).isEqualTo(39);
 
         // 파괴 카드 수 (BreakToolCard)
         long breakCardCount = cards.stream().filter(card -> card instanceof BreakToolCard).count();
@@ -74,7 +74,7 @@ class GameCardPoolTest {
         GameCardPool pool = GameCardPool.createDefaultPool(UUID.randomUUID());
 
         // 모든 카드 소진
-        for (int i = 0; i < 71; i++) {
+        for (int i = 0; i < 66; i++) {
             pool.drawCard();
         }
 
