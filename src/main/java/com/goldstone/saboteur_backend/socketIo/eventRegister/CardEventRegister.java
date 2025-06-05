@@ -6,6 +6,7 @@ import com.goldstone.saboteur_backend.dtos.card.request.PathCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.request.UserTargetRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
 import com.goldstone.saboteur_backend.exception.BusinessException;
+import com.goldstone.saboteur_backend.exception.responseDto.ErrorResponse;
 import com.goldstone.saboteur_backend.service.card.PathCardService;
 import com.goldstone.saboteur_backend.service.card.actionCard.ActionCardService;
 import com.goldstone.saboteur_backend.socketIo.SocketIoService;
@@ -28,7 +29,7 @@ public class CardEventRegister implements SocketEventRegister {
                 UseCardResponse response = actionCardService.useActionCard(request);
                 socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
             } catch (BusinessException e) {
-                client.sendEvent("cardError", e.getMessage());
+                client.sendEvent("errorEvent", new ErrorResponse(e.getErrorCode()));
             }
         });
 
@@ -38,7 +39,7 @@ public class CardEventRegister implements SocketEventRegister {
                 UseCardResponse response = actionCardService.useActionCard(request);
                 socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
             } catch (BusinessException e) {
-                client.sendEvent("cardError", e.getMessage());
+                client.sendEvent("errorEvent", new ErrorResponse(e.getErrorCode()));
             }
         });
 
@@ -46,9 +47,9 @@ public class CardEventRegister implements SocketEventRegister {
         server.addEventListener("useMapCard", CellTargetCardRequest.class, (client, request, ackSender) -> {
             try {
                 UseCardResponse response = actionCardService.useActionCard(request);
-                socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
+                client.sendEvent("cardUsed", response);
             } catch (BusinessException e) {
-                client.sendEvent("cardError", e.getMessage());
+                client.sendEvent("errorEvent", new ErrorResponse(e.getErrorCode()));
             }
         });
 
@@ -58,7 +59,7 @@ public class CardEventRegister implements SocketEventRegister {
                 UseCardResponse response = actionCardService.useActionCard(request);
                 socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
             } catch (BusinessException e) {
-                client.sendEvent("cardError", e.getMessage());
+                client.sendEvent("errorEvent", new ErrorResponse(e.getErrorCode()));
             }
         });
 
@@ -68,7 +69,7 @@ public class CardEventRegister implements SocketEventRegister {
                 UseCardResponse response = pathCardService.use(request);
                 socketIoService.sendBroadCast(request.getRoomId(), "cardUsed", response);
             } catch (BusinessException e) {
-                client.sendEvent("cardError", e.getMessage());
+                client.sendEvent("errorEvent", new ErrorResponse(e.getErrorCode()));
             }
         });
     }
