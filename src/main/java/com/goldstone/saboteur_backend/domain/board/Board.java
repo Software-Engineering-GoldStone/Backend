@@ -45,6 +45,11 @@ public class Board {
         }
     }
 
+    public int getSize() {
+        int size = this.dynamicCells.size();
+        return size * size;
+    }
+
     public Cell getCellFromXAndY(int x, int y) {
         Cell targetcell = new Cell(x, y);
         if (this.dynamicCells.contains(targetcell)) {
