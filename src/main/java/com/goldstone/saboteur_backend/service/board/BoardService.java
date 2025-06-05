@@ -57,6 +57,11 @@ public class BoardService {
 
                 Cell nextCell = board.getCellFromXAndY(nx, ny);
                 if (nextCell == null) continue;
+
+                if(nextCell.getCard() instanceof GoalCard goalCard && !board.isConnected(currentCell, nextCell)){
+                    goalCard.rotate();
+                }
+
                 if (!board.isConnected(currentCell, nextCell)) continue;
                 if (visited[nx][ny]) continue;
 
