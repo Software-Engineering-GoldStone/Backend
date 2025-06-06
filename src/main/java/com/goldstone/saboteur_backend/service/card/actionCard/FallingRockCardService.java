@@ -40,7 +40,9 @@ public class FallingRockCardService {
 
         Card targetCard = cell.getCard();
 
-        if (targetCard == null || targetCard instanceof GoalCard || targetCard instanceof StartCard) {
+        if (targetCard == null
+                || targetCard instanceof GoalCard
+                || targetCard instanceof StartCard) {
             throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
         }
 
