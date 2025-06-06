@@ -5,5 +5,6 @@ import lombok.Getter;
 @Getter
 public enum CardType {
     ACTION,
-    PATH;
+    PATH,
+    GOLD;
 }

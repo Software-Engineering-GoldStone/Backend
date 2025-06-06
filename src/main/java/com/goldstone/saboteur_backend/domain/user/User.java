@@ -1,5 +1,6 @@
 package com.goldstone.saboteur_backend.domain.user;
 
+import com.goldstone.saboteur_backend.domain.card.GoldCard;
 import com.goldstone.saboteur_backend.domain.common.BaseEntity;
 import com.goldstone.saboteur_backend.domain.enums.PlayerToolStatus;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
@@ -42,6 +43,15 @@ public class User extends BaseEntity {
     @Transient
     private Map<TargetToolType, PlayerToolStatus> toolStatusMap =
             new EnumMap<>(TargetToolType.class);
+
+    @Transient private List<GoldCard> goldCards = new ArrayList<>();
+
+    @Transient private int goldScore = 0;
+
+    public void addGoldCard(GoldCard goldCard) {
+        this.goldCards.add(goldCard);
+        this.goldScore += goldCard.getAmount();
+    }
 
     public User(String nickname, LocalDate birthDate) {
         this.id = UUID.randomUUID();

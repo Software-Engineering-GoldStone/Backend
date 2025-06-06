@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -97,7 +96,6 @@ public class CardServiceWebSocketTest {
                         """
                         .formatted(userId, cardId, targetUserId, roomId));
 
-
         System.out.println(
                 """
                         도구 수리 카드
@@ -134,7 +132,6 @@ public class CardServiceWebSocketTest {
                         """
                         .formatted(userId, pathCardId, roomId));
 
-
         PathCard pathCard2 = new PathCard(PathCardType.CROSSROAD, false); // 예: 십자형 카드
         UUID pathCardId2 = pathCard2.getCardId();
         cardList.add(pathCard2); // 핸드에 추가
@@ -154,7 +151,6 @@ public class CardServiceWebSocketTest {
                         }
                         """
                         .formatted(userId, pathCardId2, roomId));
-
 
         System.out.println(
                 """
@@ -181,10 +177,5 @@ public class CardServiceWebSocketTest {
                         }
                         """
                         .formatted(userId, cardId3, roomId));
-
-
     }
-
 }
-
-

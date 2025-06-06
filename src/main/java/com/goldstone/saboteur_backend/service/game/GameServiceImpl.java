@@ -2,10 +2,13 @@ package com.goldstone.saboteur_backend.service.game;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.goldstone.saboteur_backend.domain.card.Card;
+import com.goldstone.saboteur_backend.domain.card.GoldCard;
+import com.goldstone.saboteur_backend.domain.enums.GameRole;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.game.GameTurnManager;
-import com.goldstone.saboteur_backend.domain.mapping.UserGameRoom;
+import com.goldstone.saboteur_backend.domain.game.GoldCardDeck;
+import com.goldstone.saboteur_backend.domain.mapping.UserGameRole;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
 import com.goldstone.saboteur_backend.dtos.game.request.DiscardCardRequestDto;
@@ -17,6 +20,7 @@ import com.goldstone.saboteur_backend.dtos.game.response.NextTurnResponseDto;
 import com.goldstone.saboteur_backend.dtos.game.response.PlayCardResponseDto;
 import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
+import com.goldstone.saboteur_backend.service.board.BoardService;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import com.goldstone.saboteur_backend.socketIo.SocketIoService;
 import java.util.ArrayList;
@@ -32,48 +36,57 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameHandleService {
     @Autowired private final GlobalSession globalSession;
-    private final SocketIoService socketIoService;
+    @Autowired private final SocketIoService socketIoService;
+    @Autowired private final BoardService boardService;
 
-    // 게임 종료 조건: 카드풀이 비었고, 모든 플레이어의 손패가 0장일 때만 true
+    /* 게임 종료 조건: 카드풀이 비었고, 모든 플레이어의 손패가 0장일 때만 true
+    // 또는 금 목적지 도달 시에도 true
+     */
     private boolean isGameEnd(GameRoom gameRoom, GameCardPool cardPool) {
-        if (cardPool != null && !cardPool.isEmpty()) {
-            return false;
+        boolean cardsExhausted =
+                (cardPool == null || cardPool.isEmpty())
+                        && gameRoom.getUserGameRooms().stream()
+                                .allMatch(ugr -> ugr.getUser().getCardDeck().isEmpty());
+        boolean goalReached = !boardService.isReachableGoal(gameRoom.getId()).isEmpty();
+        return goalReached || cardsExhausted;
+    }
+
+    /* 게임 종료 및 초기화 알림을 방 전체에 브로드캐스트
+    // 역할 정보, 승리 팀, 금덩이 분배 등 포함
+     */
+    private void broadcastGameEnded(GameRoom gameRoom) {
+        List<UserGameRole> roles = globalSession.getRoleAssignment(gameRoom.getId());
+        if (roles == null) return;
+        Map<UUID, String> roleMap = new HashMap<>();
+        for (UserGameRole role : roles) {
+            roleMap.put(role.getUser().getId(), role.getRole().name());
         }
-        for (var userGameRoom : gameRoom.getUserGameRooms()) {
-            UserCardDeck deck = userGameRoom.getUser().getCardDeck();
-            if (deck != null && !deck.getCards().isEmpty()) {
-                return false;
+
+        // 승리 팀 판단
+        boolean isMinerVictory = !boardService.isReachableGoal(gameRoom.getId()).isEmpty();
+        String winningTeam = isMinerVictory ? "MINER" : "SABOTEUR";
+
+        // 금덩이 분배
+        GoldCardDeck goldDeck = globalSession.getGoldDeckSession(gameRoom.getId());
+        if (goldDeck != null && isMinerVictory) {
+            List<User> miners = new ArrayList<>();
+            for (UserGameRole role : roles) {
+                if (role.getRole() == GameRole.MINER) {
+                    miners.add(role.getUser());
+                }
+            }
+            List<GoldCard> golds = goldDeck.drawGoldCards(miners.size());
+            for (int i = 0; i < miners.size() && i < golds.size(); i++) {
+                miners.get(i).addGoldCard(golds.get(i));
             }
         }
-        return true;
-    }
 
-    // 카드풀/턴매니저/카드덱만 초기화(게임방과 유저는 유지)
-    private void resetCardPoolAndRestart(GameRoom gameRoom, UUID gameRoomId) {
-        // 1. 카드풀 새로 생성 및 등록
-        GameCardPool newCardPool = GameCardPool.createDefaultPool(gameRoomId);
-        globalSession.addGameCardPoolSession(gameRoomId, newCardPool);
-
-        // 2. 턴매니저 새로 생성 및 등록
-        GameTurnManager newTurnManager = new GameTurnManager(gameRoom.getUserGameRooms());
-        globalSession.addTurnManagerSession(gameRoomId, newTurnManager);
-
-        // 3. 플레이어 카드덱 재분배
-        List<UserGameRoom> userGameRooms = gameRoom.getUserGameRooms();
-        Map<User, UserCardDeck> userCardDecks =
-                newCardPool.assignCardsToUserDecks(
-                        userGameRooms, GameCardPool.getCardsPerPlayer(userGameRooms.size()));
-        for (User user : userCardDecks.keySet()) {
-            user.setCardDeck(userCardDecks.get(user));
-        }
-    }
-
-    // 게임 종료 및 초기화 알림을 방 전체에 브로드캐스트
-    private void broadcastGameEndedAndRestart(GameRoom gameRoom, String resultMessage) {
-        // 1. 모든 유저에게 게임 종료 알림 (결과 메시지 포함)
-        socketIoService.sendBroadCast(gameRoom.getId(), "gameEnded", resultMessage);
-        // 2. 모든 유저에게 새 라운드 시작 알림
-        socketIoService.sendBroadCast(gameRoom.getId(), "gameStarted", "새 라운드가 시작되었습니다!");
+        // 결과 브로드캐스트 (역할, 승리팀, 메시지 등)
+        Map<String, Object> result = new HashMap<>();
+        result.put("roles", roleMap);
+        result.put("winningTeam", winningTeam);
+        result.put("message", "게임이 종료되었습니다.");
+        socketIoService.sendBroadCast(gameRoom.getId(), "gameEnded", result);
     }
 
     @Override
@@ -107,9 +120,7 @@ public class GameServiceImpl implements GameHandleService {
             GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());
             boolean gameEnded = isGameEnd(gameRoom, cardPool);
             if (gameEnded) {
-                // 결과 메시지(추후 승패 등 추가 가능)
-                broadcastGameEndedAndRestart(gameRoom, "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
-                resetCardPoolAndRestart(gameRoom, dto.getGameRoomId());
+                broadcastGameEnded(gameRoom);
             }
 
             PlayCardResponseDto responseDto =
@@ -155,12 +166,10 @@ public class GameServiceImpl implements GameHandleService {
             // 턴 넘기기 후 게임 종료 체크
             boolean gameEnded = isGameEnd(gameRoom, cardPool);
             if (gameEnded) {
-                broadcastGameEndedAndRestart(gameRoom, "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
-                resetCardPoolAndRestart(gameRoom, dto.getGameRoomId());
+                broadcastGameEnded(gameRoom);
             }
 
             User nextUser = turnManager.nextTurn();
-
             NextTurnResponseDto responseDto =
                     new NextTurnResponseDto(nextUser.getId(), nextUser.getNickname(), gameEnded);
             client.sendEvent("turnChanged", responseDto);
@@ -179,6 +188,7 @@ public class GameServiceImpl implements GameHandleService {
             if (gameRoom == null) {
                 throw new Exception(GameRoomErrorCode.GAME_ROOM_NOT_FOUND.getMessage());
             }
+
             GameTurnManager turnManager = globalSession.getTurnManagerSession(dto.getGameRoomId());
             if (turnManager == null) {
                 throw new Exception("GameTurnManager를 찾을 수 없습니다.");
@@ -191,7 +201,6 @@ public class GameServiceImpl implements GameHandleService {
 
             User currentUser = turnManager.getCurrentTurnUser();
             Map<UUID, Integer> playerCardCounts = new HashMap<>();
-
             List<UUID> myCardIds = new ArrayList<>();
             UUID myUserId = currentUser.getId();
 
@@ -256,8 +265,7 @@ public class GameServiceImpl implements GameHandleService {
             GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());
             boolean gameEnded = isGameEnd(gameRoom, cardPool);
             if (gameEnded) {
-                broadcastGameEndedAndRestart(gameRoom, "모든 플레이어의 카드가 소진되어 게임이 종료되었습니다.");
-                resetCardPoolAndRestart(gameRoom, dto.getGameRoomId());
+                broadcastGameEnded(gameRoom);
             }
 
             PlayCardResponseDto responseDto =

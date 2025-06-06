@@ -13,7 +13,7 @@ public class GoldCard extends Card {
 
     @Override
     public CardType getCardType() {
-        return null;
+        return CardType.GOLD;
     }
 
     @Override
