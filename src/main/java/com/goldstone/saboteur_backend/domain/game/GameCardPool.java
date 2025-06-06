@@ -47,10 +47,25 @@ public class GameCardPool {
     public static GameCardPool createDefaultPool(UUID GameRoomId) {
         List<Card> cardList = new LinkedList<>();
 
-        // 길카드 (예시: CROSSROAD 44장, 실제로는 다양한 PathCardType을 추가해야 함)
-        for (int i = 0; i < 44; i++) {
-            cardList.add(new PathCard(PathCardType.CROSSROAD, false));
-        }
+        // DeadEnd 타입 (각 1장씩)
+        cardList.add(new PathCard(PathCardType.BOTH_HORIZONTAL_DEADEND, false));
+        cardList.add(new PathCard(PathCardType.BOTH_VERTICAL_DEADEND, false));
+        cardList.add(new PathCard(PathCardType.CROSSROAD_DEADEND, false));
+        cardList.add(new PathCard(PathCardType.HORIZONTAL_T_DEADEND, false));
+        cardList.add(new PathCard(PathCardType.VERTICAL_T_DEADEND, false));
+        cardList.add(new PathCard(PathCardType.LEFT_TURN_DEADEND, false));
+        cardList.add(new PathCard(PathCardType.RIGHT_TURN_DEADEND, false));
+        cardList.add(new PathCard(PathCardType.SINGLE_HORIZONTAL_DEADEND, false));
+        cardList.add(new PathCard(PathCardType.SINGLE_VERTICAL_DEADEND, false));
+
+        // 일반 타입
+        for (int i = 0; i < 5; i++) cardList.add(new PathCard(PathCardType.CROSSROAD, false));
+        for (int i = 0; i < 3; i++) cardList.add(new PathCard(PathCardType.HORIZONTAL, false));
+        for (int i = 0; i < 5; i++) cardList.add(new PathCard(PathCardType.HORIZONTAL_T, false));
+        for (int i = 0; i < 4; i++) cardList.add(new PathCard(PathCardType.LEFT_TURN, false));
+        for (int i = 0; i < 4; i++) cardList.add(new PathCard(PathCardType.RIGHT_TURN, false));
+        for (int i = 0; i < 4; i++) cardList.add(new PathCard(PathCardType.VERTICAL, false));
+        for (int i = 0; i < 5; i++) cardList.add(new PathCard(PathCardType.VERTICAL_T, false));
 
         // 도구 파괴 (각 3장씩)
         for (int i = 0; i < 3; i++) cardList.add(new BreakToolCard(TargetToolType.PICKAX));
@@ -61,6 +76,7 @@ public class GameCardPool {
         for (int i = 0; i < 2; i++) cardList.add(new RepairToolCard(Set.of(TargetToolType.PICKAX)));
         for (int i = 0; i < 2; i++) cardList.add(new RepairToolCard(Set.of(TargetToolType.CART)));
         for (int i = 0; i < 2; i++) cardList.add(new RepairToolCard(Set.of(TargetToolType.LIGHT)));
+
         // 도구 수리 (2개 조합 각 1장씩)
         cardList.add(new RepairToolCard(Set.of(TargetToolType.PICKAX, TargetToolType.CART)));
         cardList.add(new RepairToolCard(Set.of(TargetToolType.PICKAX, TargetToolType.LIGHT)));
@@ -73,8 +89,8 @@ public class GameCardPool {
         for (int i = 0; i < 6; i++) cardList.add(new MapCard());
 
         Collections.shuffle(cardList);
-        // 총 71장 검증
-        if (cardList.size() != 71) {
+        // 총 66장 검증
+        if (cardList.size() != 66) {
             throw new IllegalStateException("카드풀이 71장으로 초기화되지 않았습니다.");
         }
 

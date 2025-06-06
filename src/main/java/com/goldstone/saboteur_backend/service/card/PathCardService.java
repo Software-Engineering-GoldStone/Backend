@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PathCardService {
     private final GlobalSession globalSession;
-    private final PathValidator pathValidator;
-
     public UseCardResponse use(UseCardRequest request) {
         User user = globalSession.getUserSession(request.getUserId());
         Board board = globalSession.getGameBoardSession(request.getRoomId());
@@ -42,7 +40,7 @@ public class PathCardService {
             throw new BusinessException(BoardErrorCode.INVALID_PATH_PLACEMENT);
         }
 
-        if (!(pathValidator.canPlacePathCard(targetCell, pathCard))) {
+        if (!(PathValidator.canPlacePathCard(board, targetCell, pathCard))) {
             throw new BusinessException(CardErrorCode.INVALID_PATH_CARD);
         }
 

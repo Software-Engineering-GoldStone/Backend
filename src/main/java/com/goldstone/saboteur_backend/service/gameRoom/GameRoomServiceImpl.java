@@ -55,6 +55,12 @@ public class GameRoomServiceImpl implements GameRoomService {
             throw new BusinessException(GameRoomErrorCode.GAME_ROOM_NOT_FOUND);
         }
 
+        if (gameRoom.getSetting().getHost() == null) {
+            System.out.println("[PROTOTYPE] If host is not set, set user as host.");
+            System.out.println("[PROTOTYPE] User: " + gameRoom.getSetting().getHost());
+            gameRoom.getSetting().setHost(user);
+        }
+
         gameRoom.checkJoinGameRoom(user);
 
         gameRoom.addPlayer(user);

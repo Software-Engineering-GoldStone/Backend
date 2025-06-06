@@ -55,4 +55,8 @@ public class GameSetting extends BaseEntity {
     public void modifyTitle(String title) {
         this.title = title;
     }
+
+    public void setHost(User host) {
+        this.host = host;
+    }
 }

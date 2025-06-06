@@ -61,7 +61,7 @@ public class Board {
     public boolean placeCard(int x, int y, PathCard card) {
         Cell targetCell = getOrCreateCell(x, y);
 
-        if (targetCell.canPlacePathCard(card)) {
+        if (targetCell.canPlacePathCard()) {
             targetCell.setCard(card);
             return true;
         }

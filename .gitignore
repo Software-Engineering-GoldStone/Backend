@@ -38,3 +38,6 @@ out/
 
 ### application.yml ###
 application.yml
+
+# CardServiceWebSocketTest.java 무시
+src/main/java/com/goldstone/saboteur_backend/service/card/CardServiceWebSocketTest.java
