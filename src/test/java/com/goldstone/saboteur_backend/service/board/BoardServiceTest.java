@@ -36,7 +36,7 @@ class BoardServiceTest {
     void isReachableGoal() {
         Board board = new Board();
         // 테스트를 위해 랜덤으로 배치된 골 카드를, 모든 방향이 PATH인 카드로 설정
-        for (int i=0; i<Board.DEFAULT_GOAL_CELL_Y_LIST.length; i++) {
+        for (int i = 0; i < Board.DEFAULT_GOAL_CELL_Y_LIST.length; i++) {
             int y = Board.DEFAULT_GOAL_CELL_Y_LIST[i];
             board.getCellFromXAndY(Board.DEFAULT_WIDTH - 1, y)
                     .setCard(new GoalCard(GoalCardType.GOLD, PathCardType.CROSSROAD));
@@ -58,7 +58,7 @@ class BoardServiceTest {
         this.globalSession.addGameRoomSession(gameRoom);
         this.globalSession.addGameBoardSession(gameRoom, board);
 
-        List<Cell> result = this.boardService.isReachableGoal(gameRoom.getId());
+        List<Cell> result = this.boardService.getReachableGoals(board);
 
         assertEquals(1, result.size());
         assertTrue(result.get(0).getCard() instanceof GoalCard);
