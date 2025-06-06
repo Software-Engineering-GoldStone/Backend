@@ -14,6 +14,7 @@ import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.exception.responseDto.ErrorResponse;
 import com.goldstone.saboteur_backend.service.board.BoardService;
 import com.goldstone.saboteur_backend.session.GlobalSession;
+import com.goldstone.saboteur_backend.socketIo.SocketIoService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ public class BoardEventRegister implements SocketEventRegister {
 
     private final GlobalSession globalSession;
     private final BoardService boardService;
+    private final SocketIoService socketIoService;
 
     @Override
     public void registerEvents(SocketIOServer server) {
@@ -74,7 +76,8 @@ public class BoardEventRegister implements SocketEventRegister {
                             throw new BusinessException(GameRoomErrorCode.GAME_BOARD_NOT_FOUND);
                         }
 
-                        client.sendEvent("boardInfo", BoardInfoResponseDto.from(board));
+                        this.socketIoService.sendBroadCast(
+                                gameRoom.getId(), "boardInfo", BoardInfoResponseDto.from(board));
                     } catch (Exception e) {
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
