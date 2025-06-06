@@ -58,7 +58,9 @@ public class BoardService {
                 Cell nextCell = board.getCellFromXAndY(nx, ny);
                 if (nextCell == null) continue;
 
-                if(nextCell.getCard() instanceof GoalCard goalCard && !board.isConnected(currentCell, nextCell)){
+                // 현재 셀이 골 카드이지만 셀 간 연결이 되지 않는 경우, 골 카드를 회전시켜서 한번 더 검증할 수 있도록 한다.
+                if (nextCell.getCard() instanceof GoalCard goalCard
+                        && !board.isConnected(currentCell, nextCell)) {
                     goalCard.rotate();
                 }
 
@@ -72,5 +74,4 @@ public class BoardService {
 
         return result;
     }
-
 }
