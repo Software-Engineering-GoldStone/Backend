@@ -43,12 +43,22 @@ public class GameServiceImpl implements GameHandleService {
     // 또는 금 목적지 도달 시에도 true
      */
     private boolean isGameEnd(GameRoom gameRoom, GameCardPool cardPool) {
-        boolean cardsExhausted =
-                (cardPool == null || cardPool.isEmpty())
-                        && gameRoom.getUserGameRooms().stream()
-                                .allMatch(ugr -> ugr.getUser().getCardDeck().isEmpty());
-        boolean goalReached = !boardService.isReachableGoal(gameRoom.getId()).isEmpty();
-        return goalReached || cardsExhausted;
+        boolean allCardsUsedUp = isCardPoolEmpty(cardPool) && areAllPlayerHandsEmpty(gameRoom);
+        boolean goldGoalReached = isGoldGoalReached(gameRoom);
+        return goldGoalReached || allCardsUsedUp;
+    }
+
+    private boolean isCardPoolEmpty(GameCardPool cardPool) {
+        return cardPool == null || cardPool.isEmpty();
+    }
+
+    private boolean areAllPlayerHandsEmpty(GameRoom gameRoom) {
+        return gameRoom.getUserGameRooms().stream()
+                .allMatch(userGameRoom -> userGameRoom.getUser().getCardDeck().isEmpty());
+    }
+
+    private boolean isGoldGoalReached(GameRoom gameRoom) {
+        return !boardService.isReachableGoal(gameRoom.getId()).isEmpty();
     }
 
     /* 게임 종료 및 초기화 알림을 방 전체에 브로드캐스트
