@@ -6,9 +6,12 @@ import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
+import lombok.Getter;
+
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 public class RepairToolCard extends ActionCard {
     private final Set<TargetToolType> repairableTools;
     private TargetToolType targetTool;

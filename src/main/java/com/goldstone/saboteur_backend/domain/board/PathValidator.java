@@ -6,31 +6,38 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PathValidator {
-
-    public static boolean canPlacePathCard(Cell cell, PathCard pathCard) {
-        PathType[] cellSides = cell.getSides();
-        PathType[] cardSides = pathCard.getPathCardType().getSides(pathCard.isRotated());
-
+    public static boolean canPlacePathCard(Board board, Cell cell, PathCard pathCard) {
         if (cell == null || pathCard == null) {
             return false;
         }
 
-        if (cell.getCard() != null) {
+        if (!cell.canPlacePathCard()) {
             return false;
         }
 
+        // 검증을 위한 card set
+        cell.setCard(pathCard);
+
+        // up, right,down, left
+        int dx[] = {0, 1, 0, -1};
+        int dy[] = {1, 0, -1, 0};
+
         for (int i = 0; i < 4; i++) {
-            // null 값이 있는 경우 배치 불가
-            if (cellSides[i] == null || cardSides[i] == null) {
-                return false;
+            int nx = cell.getX() + dx[i];
+            int ny = cell.getY() + dy[i];
+            Cell toCell = board.getCellFromXAndY(nx, ny);
+
+            if (toCell == null) {
+                continue;
             }
 
-            // 셀의 면과 카드의 면이 일치하지 않으면 배치 불가
-            if (!cellSides[i].equals(PathType.EMPTY) && !cellSides[i].equals(cardSides[i])) {
+            if (!PathValidator.isConnected(cell, toCell, i)) {
+                cell.removeCard();
                 return false;
             }
         }
 
+        cell.removeCard();
         return true;
     }
 

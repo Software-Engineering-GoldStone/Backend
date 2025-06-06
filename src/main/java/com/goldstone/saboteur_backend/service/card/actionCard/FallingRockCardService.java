@@ -3,6 +3,8 @@ package com.goldstone.saboteur_backend.service.card.actionCard;
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.board.Cell;
 import com.goldstone.saboteur_backend.domain.card.Card;
+import com.goldstone.saboteur_backend.domain.card.GoalCard;
+import com.goldstone.saboteur_backend.domain.card.StartCard;
 import com.goldstone.saboteur_backend.domain.card.actionCard.FallingRockCard;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.dtos.card.request.CellTargetCardRequest;
@@ -35,6 +37,12 @@ public class FallingRockCardService {
         int y = request.getTargetCellY();
 
         Cell cell = board.getOrCreateCell(x, y);
+
+        Card targetCard = cell.getCard();
+
+        if (targetCard == null || targetCard instanceof GoalCard || targetCard instanceof StartCard) {
+            throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
+        }
 
         ((FallingRockCard) card).use(cell);
 

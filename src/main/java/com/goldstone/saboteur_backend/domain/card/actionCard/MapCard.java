@@ -1,6 +1,7 @@
 package com.goldstone.saboteur_backend.domain.card.actionCard;
 
 import com.goldstone.saboteur_backend.domain.board.Cell;
+import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.GoalCard;
 import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
 import com.goldstone.saboteur_backend.domain.enums.GoalCardType;
@@ -18,13 +19,17 @@ public class MapCard extends ActionCard {
     public GoalCardType peekDestinationCard(Cell cell) {
         targetCell = cell;
 
-        if (targetCell == null
-                || !(targetCell.getCard() instanceof GoalCard)
-                || targetCell.isEmptyCard()) {
+        if (targetCell == null || targetCell.isEmptyCard()) {
             throw new BusinessException(CardErrorCode.INVALID_GOAL_CARD);
         }
 
-        GoalCard goalCard = (GoalCard) targetCell.getCard();
+        Card card = targetCell.getCard();
+
+        if (!(card instanceof GoalCard)){
+            throw new BusinessException(CardErrorCode.INVALID_GOAL_CARD);
+        }
+        GoalCard goalCard = (GoalCard) card;
+
         return goalCard.getType();
     }
 

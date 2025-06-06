@@ -57,7 +57,7 @@ public class Cell {
         return sides[3];
     }
 
-    public boolean canPlacePathCard(PathCard pathCard) {
+    public boolean canPlacePathCard() {
         for (int i = 0; i < this.sides.length; i++) {
             if (!this.sides[i].equals(PathType.EMPTY)) {
                 return false;

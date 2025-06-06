@@ -63,7 +63,7 @@ public class ActionCardService {
             }
             default -> throw new BusinessException(CardErrorCode.INVALID_CARD_TYPE);
         }
-        ;
+
 
         user.getCardDeck().useCard(actionCard);
 

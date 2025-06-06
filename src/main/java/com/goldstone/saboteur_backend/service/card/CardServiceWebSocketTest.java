@@ -4,6 +4,9 @@ import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.card.actionCard.BreakToolCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.FallingRockCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.MapCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.RepairToolCard;
 import com.goldstone.saboteur_backend.domain.enums.PathCardType;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
@@ -12,9 +15,11 @@ import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -50,9 +55,25 @@ public class CardServiceWebSocketTest {
         BreakToolCard card = new BreakToolCard(TargetToolType.PICKAX);
         UUID cardId = card.getCardId();
 
+        HashSet<TargetToolType> set = new HashSet<>();
+        set.add(TargetToolType.PICKAX);
+        RepairToolCard card1 = new RepairToolCard(set);
+        card1.selectTool(TargetToolType.PICKAX);
+        UUID cardId1 = card1.getCardId();
+
+        MapCard card2 = new MapCard();
+        UUID cardId2 = card2.getCardId();
+
+        FallingRockCard card3 = new FallingRockCard();
+        UUID cardId3 = card3.getCardId();
+
         // 카드 등록
         List<Card> cardList = new ArrayList<>();
         cardList.add(card);
+        cardList.add(card1);
+        cardList.add(card2);
+        cardList.add(card3);
+
         UserCardDeck userDeck = new UserCardDeck(user, cardList);
         user.setCardDeck(userDeck);
 
@@ -62,26 +83,35 @@ public class CardServiceWebSocketTest {
         globalSession.addGameRoomSession(gameRoom);
         globalSession.addGameBoardSession(gameRoom, board);
 
-        // 콘솔 출력
-        System.out.println("[테스트 환경 초기화 완료]");
-        System.out.println("[DEBUG] 카드 ID: " + cardId);
-        System.out.println("[DEBUG] 유저 ID: " + userId);
-        System.out.println("[DEBUG] 타겟 유저 ID: " + targetUserId);
-        System.out.println("[DEBUG] 게임룸 ID: " + roomId);
-        System.out.println();
-        System.out.println("Postman WebSocket 요청 예시:");
         System.out.println(
                 """
-                {
-                  "userId": "%s",
-                  "cardId": "%s",
-                  "cardType": "ACTION",
-                  "actionCardType": "DESTROY",
-                  "targetUserId": "%s",
-                  "roomId": "%s"
-                }
-                """
+                        도구 고장 카드
+                        {
+                          "userId": "%s",
+                          "cardId": "%s",
+                          "cardType": "ACTION",
+                          "actionCardType": "DESTROY",
+                          "targetUserId": "%s",
+                          "roomId": "%s"
+                        }
+                        """
                         .formatted(userId, cardId, targetUserId, roomId));
+
+
+        System.out.println(
+                """
+                        도구 수리 카드
+                        {
+                          "userId": "%s",
+                          "cardId": "%s",
+                          "cardType": "ACTION",
+                          "actionCardType": "REPAIR",
+                          "targetUserId": "%s",
+                          "roomId": "%s"
+                        }
+                        """
+                        .formatted(userId, cardId1, targetUserId, roomId, card1));
+        System.out.println("repairableTools: " + card1.getRepairableTools());
 
         // 길카드 테스트
         PathCard pathCard = new PathCard(PathCardType.CROSSROAD, false); // 예: 십자형 카드
@@ -93,15 +123,68 @@ public class CardServiceWebSocketTest {
         System.out.println("Postman WebSocket 길카드 설치 요청 예시:");
         System.out.println(
                 """
-                {
-                  "userId": "%s",
-                  "cardId": "%s",
-                  "cardType": "PATH",
-                  "roomId": "%s",
-                  "targetCellX": 2,
-                  "targetCellY": 1
-                }
-                """
+                        {
+                          "userId": "%s",
+                          "cardId": "%s",
+                          "cardType": "PATH",
+                          "roomId": "%s",
+                          "targetCellX": 2,
+                          "targetCellY": 1
+                        }
+                        """
                         .formatted(userId, pathCardId, roomId));
+
+
+        PathCard pathCard2 = new PathCard(PathCardType.CROSSROAD, false); // 예: 십자형 카드
+        UUID pathCardId2 = pathCard2.getCardId();
+        cardList.add(pathCard2); // 핸드에 추가
+
+        System.out.println("[DEBUG] 길카드 ID: " + pathCardId2);
+        System.out.println();
+        System.out.println("Postman WebSocket 길카드 설치 요청 예시:");
+        System.out.println(
+                """
+                        {
+                          "userId": "%s",
+                          "cardId": "%s",
+                          "cardType": "PATH",
+                          "roomId": "%s",
+                          "targetCellX": 2,
+                          "targetCellY": 1
+                        }
+                        """
+                        .formatted(userId, pathCardId2, roomId));
+
+
+        System.out.println(
+                """
+                        {
+                          "userId": "%s",
+                          "cardId": "%s",
+                          "cardType": "ACTION",
+                          "roomId": "%s",
+                          "targetCellX": 8,
+                          "targetCellY": 2
+                        }
+                        """
+                        .formatted(userId, cardId2, roomId));
+
+        System.out.println(
+                """
+                        {
+                          "userId": "%s",
+                          "cardId": "%s",
+                          "cardType": "ACTION",
+                          "roomId": "%s",
+                          "targetCellX": 2,
+                          "targetCellY": 1
+                        }
+                        """
+                        .formatted(userId, cardId3, roomId));
+
+
     }
+
 }
+
+
