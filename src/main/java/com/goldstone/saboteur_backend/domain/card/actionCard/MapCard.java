@@ -25,7 +25,7 @@ public class MapCard extends ActionCard {
 
         Card card = targetCell.getCard();
 
-        if (!(card instanceof GoalCard)){
+        if (!(card instanceof GoalCard)) {
             throw new BusinessException(CardErrorCode.INVALID_GOAL_CARD);
         }
         GoalCard goalCard = (GoalCard) card;

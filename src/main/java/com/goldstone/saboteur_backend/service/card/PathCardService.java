@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PathCardService {
     private final GlobalSession globalSession;
+
     public UseCardResponse use(UseCardRequest request) {
         User user = globalSession.getUserSession(request.getUserId());
         Board board = globalSession.getGameBoardSession(request.getRoomId());
