@@ -26,7 +26,7 @@ public class SocketIoService {
             UUID roomId, String eventName, T data, SocketIOClient senderClient) {
         if (roomId == null || eventName == null || data == null || senderClient == null) {
             throw new IllegalArgumentException(
-                    "Room ID, event na  me, data, and sender client must not be null");
+                    "Room ID, event name, data, and sender client must not be null");
         }
         server.getRoomOperations(roomId.toString()).getClients().stream()
                 .filter(client -> !client.getSessionId().equals(senderClient.getSessionId()))
