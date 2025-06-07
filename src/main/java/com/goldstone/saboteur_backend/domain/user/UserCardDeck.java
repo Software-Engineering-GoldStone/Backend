@@ -31,6 +31,10 @@ public class UserCardDeck {
         return false;
     }
 
+    public boolean isEmpty() {
+        return cards == null || cards.isEmpty();
+    }
+
     public void addCard(Card card) {
         cards.add(card);
     }

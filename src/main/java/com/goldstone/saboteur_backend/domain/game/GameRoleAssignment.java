@@ -27,11 +27,9 @@ public class GameRoleAssignment {
      *
      * @param gameRoom 게임방 객체
      * @param userGameRooms 방에 참여한 UserGameRoom 리스트
-     * @param round 라운드 번호
      * @return UserGameRole 리스트 (각 유저별 역할 할당)
      */
-    public List<UserGameRole> assignRoles(
-            GameRoom gameRoom, List<UserGameRoom> userGameRooms, Integer round) {
+    public List<UserGameRole> assignRoles(GameRoom gameRoom, List<UserGameRoom> userGameRooms) {
         List<UserGameRole> result = new ArrayList<>();
         List<User> users = userGameRooms.stream().map(UserGameRoom::getUser).toList();
 
@@ -51,10 +49,8 @@ public class GameRoleAssignment {
 
         for (int i = 0; i < users.size(); i++) {
             result.add(
-                    new UserGameRole(
-                            gameRoom, userGameRooms.get(i), users.get(i), roles.get(i), round));
+                    new UserGameRole(gameRoom, userGameRooms.get(i), users.get(i), roles.get(i)));
         }
-
         return result;
     }
 }

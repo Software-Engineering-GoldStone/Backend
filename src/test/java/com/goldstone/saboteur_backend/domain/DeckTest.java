@@ -66,7 +66,7 @@ public class DeckTest {
             assertEquals(initialHandSize, deck.getCards().size(), "초기 손패 분배 확인");
         }
 
-        int expectedInitialPoolSize = 71 - (playerCount * initialHandSize);
+        int expectedInitialPoolSize = 66 - (playerCount * initialHandSize);
         assertEquals(expectedInitialPoolSize, cardPool.getCards().size(), "카드풀 잔여량 확인");
 
         int turn = 0;

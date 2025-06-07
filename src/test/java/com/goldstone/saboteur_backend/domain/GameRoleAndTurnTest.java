@@ -45,7 +45,8 @@ public class GameRoleAndTurnTest {
         prepareTestData(playerCount);
         GameRoleAssignment roleAssignment = new GameRoleAssignment();
 
-        List<UserGameRole> roles = roleAssignment.assignRoles(gameRoom, userGameRooms, 1);
+        // 라운드 인자(1) 제거!
+        List<UserGameRole> roles = roleAssignment.assignRoles(gameRoom, userGameRooms);
 
         assertEquals(playerCount, roles.size(), playerCount + "명일 때 모든 플레이어에게 역할이 할당되어야 함");
 

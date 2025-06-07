@@ -35,12 +35,10 @@ public class UserGameRole extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private GameRole role;
 
-    public UserGameRole(
-            GameRoom gameRoom, UserGameRoom userGameRoom, User user, GameRole role, Integer round) {
+    public UserGameRole(GameRoom gameRoom, UserGameRoom userGameRoom, User user, GameRole role) {
         this.gameRoom = gameRoom;
         this.userGameRoom = userGameRoom;
         this.user = user;
         this.role = role;
-        this.round = round;
     }
 }
