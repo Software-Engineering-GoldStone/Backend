@@ -1,6 +1,7 @@
 package com.goldstone.saboteur_backend.service.game;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.GoldCard;
 import com.goldstone.saboteur_backend.domain.enums.GameRole;
@@ -18,6 +19,7 @@ import com.goldstone.saboteur_backend.dtos.game.request.PlayCardRequestDto;
 import com.goldstone.saboteur_backend.dtos.game.response.GetGameStateResponseDto;
 import com.goldstone.saboteur_backend.dtos.game.response.NextTurnResponseDto;
 import com.goldstone.saboteur_backend.dtos.game.response.PlayCardResponseDto;
+import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
 import com.goldstone.saboteur_backend.service.board.BoardService;
@@ -58,7 +60,11 @@ public class GameServiceImpl implements GameHandleService {
     }
 
     private boolean isGoldGoalReached(GameRoom gameRoom) {
-        return !boardService.isReachableGoal(gameRoom.getId()).isEmpty();
+        Board board = this.globalSession.getGameBoardSession(gameRoom.getId());
+        if (board == null) {
+            throw new BusinessException(GameRoomErrorCode.GAME_BOARD_NOT_FOUND);
+        }
+        return !boardService.getReachableGoals(board).isEmpty();
     }
 
     /* 게임 종료 및 초기화 알림을 방 전체에 브로드캐스트
@@ -73,7 +79,11 @@ public class GameServiceImpl implements GameHandleService {
         }
 
         // 승리 팀 판단
-        boolean isMinerVictory = !boardService.isReachableGoal(gameRoom.getId()).isEmpty();
+        Board board = this.globalSession.getGameBoardSession(gameRoom.getId());
+        if (board == null) {
+            throw new BusinessException(GameRoomErrorCode.GAME_BOARD_NOT_FOUND);
+        }
+        boolean isMinerVictory = !boardService.getReachableGoals(board).isEmpty();
         String winningTeam = isMinerVictory ? "MINER" : "SABOTEUR";
 
         // 금덩이 분배
