@@ -2,6 +2,7 @@ package com.goldstone.saboteur_backend.service.gameRoom;
 
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.game.GameSetting;
+import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import jakarta.annotation.PostConstruct;
 import java.util.UUID;
@@ -24,10 +25,19 @@ public class GameRoomServicePrototype {
     public void init() {
         GameRoom gameRoom = new GameRoom();
         GameSetting gameSetting = new GameSetting(gameRoom, null, "프로토타입 게임룸", 10, 3);
+        User[] users = new User[3];
+
 
         // 프로토타입용 게임룸 설정
         gameRoom.setId(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"));
         gameRoom.setSetting(gameSetting);
+
+        for(int i=0; i<3; i++){
+            users[i] = new User();
+            users[i].setId(UUID.randomUUID());
+            globalSession.addUserSession(users[i]);
+            System.out.println("user"+i+"id : "+users[i].getId());
+        }
 
         // 게임룸을 글로벌 세션에 등록합니다.
         globalSession.addGameRoomSession(gameRoom);

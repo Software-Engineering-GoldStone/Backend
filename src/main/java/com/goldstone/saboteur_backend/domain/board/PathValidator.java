@@ -31,6 +31,10 @@ public class PathValidator {
                 continue;
             }
 
+            if (toCell.isEmptyCard()) {
+                continue;
+            }
+
             if (!PathValidator.isConnected(cell, toCell, i)) {
                 cell.removeCard();
                 return false;
