@@ -56,6 +56,9 @@ public class BoardEventRegister implements SocketEventRegister {
                                 "reachableGoals",
                                 GetReachableGoalsResponseDto.of(gameRoom, result));
                     } catch (Exception e) {
+                        System.err.println(request);
+                        e.printStackTrace();
+
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
                             client.sendEvent("errorEvent", new ErrorResponse(errorCode));
@@ -84,6 +87,9 @@ public class BoardEventRegister implements SocketEventRegister {
                         this.socketIoService.sendBroadCast(
                                 gameRoom.getId(), "boardInfo", BoardInfoResponseDto.from(board));
                     } catch (Exception e) {
+                        System.err.println(request);
+                        e.printStackTrace();
+
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
                             client.sendEvent("errorEvent", new ErrorResponse(errorCode));
@@ -114,6 +120,9 @@ public class BoardEventRegister implements SocketEventRegister {
                         this.socketIoService.sendBroadCast(
                                 gameRoom.getId(), "goalCellInfo", responseDto);
                     } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
                             client.sendEvent("errorEvent", new ErrorResponse(errorCode));

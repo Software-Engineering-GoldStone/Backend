@@ -21,27 +21,62 @@ public class GameServiceEventRegister implements SocketEventRegister {
         server.addEventListener(
                 "playCard",
                 PlayCardRequestDto.class,
-                (client, data, ackSender) -> this.gameHandleService.playCard(client, data));
+                (client, data, ackSender) -> {
+                    try {
+                        this.gameHandleService.playCard(client, data);
+                    } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+                    }
+                });
 
         server.addEventListener(
                 "nextTurn",
                 NextTurnRequestDto.class,
-                (client, data, ackSender) -> this.gameHandleService.nextTurn(client, data));
+                (client, data, ackSender) -> {
+                    try {
+                        this.gameHandleService.nextTurn(client, data);
+                    } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+                    }
+                });
 
         server.addEventListener(
                 "getGameState",
                 GetGameStateRequestDto.class,
-                (client, data, ackSender) -> this.gameHandleService.getGameState(client, data));
+                (client, data, ackSender) -> {
+                    try {
+                        this.gameHandleService.getGameState(client, data);
+                    } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+                    }
+                });
 
         server.addEventListener(
                 "discardCard",
                 DiscardCardRequestDto.class,
-                (client, data, ackSender) -> this.gameHandleService.discardCard(client, data));
+                (client, data, ackSender) -> {
+                    try {
+                        this.gameHandleService.discardCard(client, data);
+                    } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+                    }
+                });
 
         server.addEventListener(
                 "selectGoldCard",
                 SelectGoldCardRequestDto.class,
-                (client, data, ackSender) -> this.gameHandleService.selectGoldCard(client, data));
+                (client, data, ackSender) -> {
+                    try {
+                        this.gameHandleService.selectGoldCard(client, data);
+                    } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+                    }
+                });
 
         server.addEventListener(
                 "getUserDeck",
@@ -53,6 +88,9 @@ public class GameServiceEventRegister implements SocketEventRegister {
                                         data.getGameRoomId(), data.getUserId());
                         client.sendEvent("yourCardDeck", result);
                     } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
                             client.sendEvent("errorEvent", new ErrorResponse(errorCode));

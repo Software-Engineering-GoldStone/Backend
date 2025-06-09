@@ -4,6 +4,7 @@ import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
 import java.util.UUID;
 import lombok.*;
 
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor

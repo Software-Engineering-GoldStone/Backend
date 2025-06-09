@@ -34,6 +34,9 @@ public class GameRoomEventRegister implements SocketEventRegister {
 
                         client.sendEvent("gameRoomJoined", JoinGameRoomResponseDto.from(gameRoom));
                     } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
                             client.sendEvent("errorEvent", new ErrorResponse(errorCode));
@@ -56,6 +59,9 @@ public class GameRoomEventRegister implements SocketEventRegister {
                                 "gameStarted",
                                 GameRoomInfoResponseDto.from(gameRoom));
                     } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
                             client.sendEvent("errorEvent", new ErrorResponse(errorCode));
@@ -80,6 +86,9 @@ public class GameRoomEventRegister implements SocketEventRegister {
                                 GetGameRoomUsersResponseDto.of(
                                         gameRoom, gameRoom.getUserGameRooms()));
                     } catch (Exception e) {
+                        System.err.println(data);
+                        e.printStackTrace();
+
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
                             client.sendEvent("errorEvent", new ErrorResponse(errorCode));
