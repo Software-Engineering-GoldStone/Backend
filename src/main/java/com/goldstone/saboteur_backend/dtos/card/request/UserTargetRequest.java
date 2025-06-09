@@ -19,4 +19,9 @@ public class UserTargetRequest implements UseCardRequest {
     private CardType cardType;
     private ActionCardType actionCardType;
     private TargetToolType selectedTool;
+
+    @Override
+    public UUID getGameRoomId() {
+        return this.roomId;
+    }
 }

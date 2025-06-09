@@ -11,4 +11,6 @@ public interface UseCardRequest {
     UUID getRoomId();
 
     CardType getCardType();
+
+    UUID getGameRoomId();
 }

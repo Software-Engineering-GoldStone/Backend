@@ -5,13 +5,16 @@ import com.goldstone.saboteur_backend.domain.board.Cell;
 import com.goldstone.saboteur_backend.domain.board.PathValidator;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.PathCard;
+import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.dtos.card.request.PathCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
+import com.goldstone.saboteur_backend.dtos.game.request.PlayCardRequestDto;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.BoardErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
+import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.service.board.BoardService;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import java.util.List;
@@ -24,39 +27,31 @@ public class PathCardService {
     private final GlobalSession globalSession;
     private final BoardService boardService;
 
-    public UseCardResponse use(UseCardRequest request) {
-        User user = globalSession.getUserSession(request.getUserId());
-        Board board = globalSession.getGameBoardSession(request.getRoomId());
+    public UseCardResponse use(GameRoom gameRoom, User user, PathCard card, PlayCardRequestDto dto) {
+        Board board = this.globalSession.getGameBoardSession(gameRoom.getId());
+        if (board == null) {
+            throw new BusinessException(GameRoomErrorCode.GAME_BOARD_NOT_FOUND);
+        }
 
-        Card card =
-                user.getCardDeck().getCards().stream()
-                        .filter(c -> c.getId().equals(request.getCardId()))
-                        .findFirst()
-                        .orElseThrow(() -> new BusinessException(CardErrorCode.INVALID_CARD_ID));
-
-        PathCard pathCard = (PathCard) card;
-
-        int x = ((PathCardRequest) request).getTargetCellX();
-        int y = ((PathCardRequest) request).getTargetCellY();
-        Cell targetCell = board.getOrCreateCell(x, y);
+        Cell targetCell = board.getOrCreateCell(dto.getX(), dto.getY());
 
         if (!targetCell.isEmptyCard()) {
             throw new BusinessException(BoardErrorCode.INVALID_PATH_PLACEMENT);
         }
 
-        if (!(PathValidator.canPlacePathCard(board, targetCell, pathCard))) {
+        if (!(PathValidator.canPlacePathCard(board, targetCell, card))) {
             throw new BusinessException(CardErrorCode.INVALID_PATH_CARD);
         }
 
-        targetCell.setCard(pathCard);
-        user.getCardDeck().useCard(pathCard);
+        targetCell.setCard(card);
+        //user.getCardDeck().useCard(pathCard);
 
         List<Cell> reachableGoals = boardService.getReachableGoals(board);
         if (!reachableGoals.isEmpty()) {
-            globalSession.setGoldFinder(request.getRoomId(), user);
+            globalSession.setGoldFinder(gameRoom.getId(), user);
         }
 
         return new UseCardResponse(
-                null, null, null, String.format("(%d, %d) 위치에 길카드가 놓였습니다.", x, y));
+                null, null, null, String.format("(%d, %d) 위치에 길카드가 놓였습니다.", dto.getX(), dto.getY()));
     }
 }

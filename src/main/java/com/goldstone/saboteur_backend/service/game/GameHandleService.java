@@ -1,6 +1,7 @@
 package com.goldstone.saboteur_backend.service.game;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
 import com.goldstone.saboteur_backend.dtos.game.request.*;
 import com.goldstone.saboteur_backend.dtos.game.response.GetGameStateResponseDto;
 import com.goldstone.saboteur_backend.dtos.game.response.NextTurnResponseDto;
