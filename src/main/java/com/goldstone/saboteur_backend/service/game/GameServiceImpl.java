@@ -292,7 +292,7 @@ public class GameServiceImpl implements GameHandleService {
             User nextUser = turnManager.nextTurn();
             NextTurnResponseDto responseDto =
                     new NextTurnResponseDto(nextUser.getId(), nextUser.getNickname(), gameEnded);
-            client.sendEvent("turnChanged", responseDto);
+            this.socketIoService.sendBroadCast(gameRoom.getId(), "turnChanged", responseDto);
             return responseDto;
         } catch (Exception e) {
             client.sendEvent("error", e.getMessage());
