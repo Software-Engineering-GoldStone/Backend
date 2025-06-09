@@ -45,7 +45,12 @@ public class GlobalSession {
         try {
             return action.get();
         } catch (Exception e) {
-            System.err.println("Exception in GlobalSession wrapperCall:\n" + e);
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            String callerInfo = stackTrace.length > 2 ? stackTrace[2].toString() : "Unknown";
+
+            System.err.println("Exception in GlobalSession wrapperCall from:\n" + callerInfo);
+            e.printStackTrace();
+
             throw new BusinessException(CommonErrorCode.FAILED_TO_MANIPULATE_GLOBAL_SESSION);
         }
     }
