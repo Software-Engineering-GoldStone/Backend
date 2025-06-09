@@ -5,16 +5,20 @@ import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.board.Cell;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.dtos.board.request.GetBoardInfoRequestDto;
+import com.goldstone.saboteur_backend.dtos.board.request.GetGoalCellInfoRequestDto;
 import com.goldstone.saboteur_backend.dtos.board.request.GetReachableGoalsRequestDto;
 import com.goldstone.saboteur_backend.dtos.board.response.BoardInfoResponseDto;
 import com.goldstone.saboteur_backend.dtos.board.response.GetReachableGoalsResponseDto;
+import com.goldstone.saboteur_backend.dtos.cell.response.CellInfoResponseDto;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.ErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.exception.responseDto.ErrorResponse;
 import com.goldstone.saboteur_backend.service.board.BoardService;
+import com.goldstone.saboteur_backend.service.gameRoom.GameRoomService;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import com.goldstone.saboteur_backend.socketIo.SocketIoService;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,6 +29,7 @@ public class BoardEventRegister implements SocketEventRegister {
 
     private final GlobalSession globalSession;
     private final BoardService boardService;
+    private final GameRoomService gameRoomService;
     private final SocketIoService socketIoService;
 
     @Override
@@ -78,6 +83,36 @@ public class BoardEventRegister implements SocketEventRegister {
 
                         this.socketIoService.sendBroadCast(
                                 gameRoom.getId(), "boardInfo", BoardInfoResponseDto.from(board));
+                    } catch (Exception e) {
+                        if (e instanceof BusinessException) {
+                            ErrorCode errorCode = ((BusinessException) e).getErrorCode();
+                            client.sendEvent("errorEvent", new ErrorResponse(errorCode));
+                        } else {
+                            client.sendEvent("errorEvent", ErrorResponse.internalServerError());
+                        }
+                    }
+                });
+
+        // 골 카드 리스트 반환
+        server.addEventListener(
+                "getGoalCellInfo",
+                GetGoalCellInfoRequestDto.class,
+                (client, data, request) -> {
+                    try {
+                        GameRoom gameRoom =
+                                this.gameRoomService.getGameRoomById(data.getGameRoomId());
+                        Board board = this.globalSession.getGameBoardSession(gameRoom.getId());
+                        if (board == null) {
+                            throw new BusinessException(GameRoomErrorCode.GAME_BOARD_NOT_FOUND);
+                        }
+
+                        CellInfoResponseDto[] responseDto =
+                                Arrays.stream(board.getGoals())
+                                        .map(CellInfoResponseDto::from)
+                                        .toArray(CellInfoResponseDto[]::new);
+
+                        this.socketIoService.sendBroadCast(
+                                gameRoom.getId(), "goalCellInfo", responseDto);
                     } catch (Exception e) {
                         if (e instanceof BusinessException) {
                             ErrorCode errorCode = ((BusinessException) e).getErrorCode();
