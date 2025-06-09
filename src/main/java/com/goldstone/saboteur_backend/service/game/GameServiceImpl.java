@@ -21,6 +21,7 @@ import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
 import com.goldstone.saboteur_backend.service.board.BoardService;
+import com.goldstone.saboteur_backend.service.gameRoom.GameRoomService;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import com.goldstone.saboteur_backend.socketIo.SocketIoService;
 import java.util.*;
@@ -35,6 +36,7 @@ public class GameServiceImpl implements GameHandleService {
     @Autowired private final GlobalSession globalSession;
     @Autowired private final SocketIoService socketIoService;
     @Autowired private final BoardService boardService;
+    @Autowired private final GameRoomService gameRoomService;
 
     /* 게임 종료 조건: 카드풀이 비었고, 모든 플레이어의 손패가 0장일 때만 true
     // 또는 금 목적지 도달 시에도 true
@@ -290,7 +292,7 @@ public class GameServiceImpl implements GameHandleService {
             User nextUser = turnManager.nextTurn();
             NextTurnResponseDto responseDto =
                     new NextTurnResponseDto(nextUser.getId(), nextUser.getNickname(), gameEnded);
-            client.sendEvent("turnChanged", responseDto);
+            this.socketIoService.sendBroadCast(gameRoom.getId(), "turnChanged", responseDto);
             return responseDto;
         } catch (Exception e) {
             client.sendEvent("error", e.getMessage());
@@ -449,5 +451,18 @@ public class GameServiceImpl implements GameHandleService {
             }
             throw e;
         }
+    }
+
+    @Override
+    public List<Card> getUserDeck(UUID gameRoomId, UUID userId) {
+        GameRoom gameRoom = this.gameRoomService.getGameRoomById(gameRoomId);
+        User user =
+                gameRoom.getPlayers().stream()
+                        .filter((player) -> player.getId().equals(userId))
+                        .findFirst()
+                        .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+
+        List<Card> result = user.getCardDeck().getCards().stream().toList();
+        return result;
     }
 }
