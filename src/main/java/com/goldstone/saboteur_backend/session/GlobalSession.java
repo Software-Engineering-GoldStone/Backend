@@ -45,7 +45,12 @@ public class GlobalSession {
         try {
             return action.get();
         } catch (Exception e) {
-            System.err.println("Exception in GlobalSession wrapperCall:\n" + e);
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            String callerInfo = stackTrace.length > 2 ? stackTrace[2].toString() : "Unknown";
+
+            System.err.println("Exception in GlobalSession wrapperCall from:\n" + callerInfo);
+            e.printStackTrace();
+
             throw new BusinessException(CommonErrorCode.FAILED_TO_MANIPULATE_GLOBAL_SESSION);
         }
     }
@@ -124,39 +129,45 @@ public class GlobalSession {
         return wrapperCall(() -> roleAssignmentSession.get(gameRoomId));
     }
 
-    public void addUserSocketId(UUID userId, UUID socketId) {
-        userSocketIdMap.put(userId, socketId);
+    public boolean addUserSocketId(UUID userId, UUID socketId) {
+        this.wrapperCall(() -> userSocketIdMap.put(userId, socketId));
+        return true;
     }
 
     public UUID getSocketIdByUserId(UUID userId) {
-        return userSocketIdMap.get(userId);
+        return this.wrapperCall(() -> userSocketIdMap.get(userId));
     }
 
-    public void removeUserSocketId(UUID userId) {
-        userSocketIdMap.remove(userId);
+    public boolean removeUserSocketId(UUID userId) {
+        this.wrapperCall(() -> userSocketIdMap.remove(userId));
+        return true;
     }
 
-    public void setGoldFinder(UUID gameRoomId, User user) {
-        wrapperCall(() -> goldFinderSession.put(gameRoomId, user));
+    public boolean setGoldFinder(UUID gameRoomId, User user) {
+        this.wrapperCall(() -> goldFinderSession.put(gameRoomId, user));
+        return true;
     }
 
     public User getGoldFinder(UUID gameRoomId) {
-        return wrapperCall(() -> goldFinderSession.get(gameRoomId));
+        return this.wrapperCall(() -> goldFinderSession.get(gameRoomId));
     }
 
-    public void removeGoldFinder(UUID gameRoomId) {
-        wrapperCall(() -> goldFinderSession.remove(gameRoomId));
+    public boolean removeGoldFinder(UUID gameRoomId) {
+        this.wrapperCall(() -> goldFinderSession.remove(gameRoomId));
+        return true;
     }
 
-    public void setGoldDistributionState(UUID gameRoomId, GoldDistributionState state) {
-        wrapperCall(() -> goldDistributionSession.put(gameRoomId, state));
+    public boolean setGoldDistributionState(UUID gameRoomId, GoldDistributionState state) {
+        this.wrapperCall(() -> goldDistributionSession.put(gameRoomId, state));
+        return true;
     }
 
     public GoldDistributionState getGoldDistributionState(UUID gameRoomId) {
-        return wrapperCall(() -> goldDistributionSession.get(gameRoomId));
+        return this.wrapperCall(() -> goldDistributionSession.get(gameRoomId));
     }
 
-    public void removeGoldDistributionState(UUID gameRoomId) {
-        wrapperCall(() -> goldDistributionSession.remove(gameRoomId));
+    public boolean removeGoldDistributionState(UUID gameRoomId) {
+        this.wrapperCall(() -> goldDistributionSession.remove(gameRoomId));
+        return true;
     }
 }
