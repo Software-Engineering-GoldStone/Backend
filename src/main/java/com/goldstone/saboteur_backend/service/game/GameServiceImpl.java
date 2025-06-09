@@ -242,15 +242,19 @@ public class GameServiceImpl implements GameHandleService {
                             .findFirst()
                             .orElseThrow(() -> new Exception("카드를 찾을 수 없습니다."));
 
-            boolean result = deck.useCard(card);
-
-            if (card instanceof ActionCard) {
-                actionCardService.useActionCard(gameRoom, card, dto);
-            } else if (card instanceof PathCard pathCard) {
-                pathCardService.use(gameRoom, user, pathCard, dto);
-            } else {
-                throw new BusinessException(CardErrorCode.INVALID_CARD_ID);
+            try {
+                if (card instanceof ActionCard) {
+                    actionCardService.useActionCard(gameRoom, card, dto);
+                } else if (card instanceof PathCard pathCard) {
+                    pathCardService.use(gameRoom, user, pathCard, dto);
+                } else {
+                    throw new BusinessException(CardErrorCode.INVALID_CARD_ID);
+                }
+            } catch (Exception e) {
+                throw e;
             }
+
+            boolean result = deck.useCard(card);
 
             // 카드 사용 후 게임 종료 체크
             GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());
@@ -265,7 +269,7 @@ public class GameServiceImpl implements GameHandleService {
             client.sendEvent("cardPlayed", responseDto);
             return responseDto;
         } catch (Exception e) {
-            client.sendEvent("error", e.getMessage());
+            client.sendEvent("cardPlayedError", e.getMessage());
             throw e;
         }
     }

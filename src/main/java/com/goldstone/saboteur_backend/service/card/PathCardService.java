@@ -38,7 +38,7 @@ public class PathCardService {
         }
 
         if (!(PathValidator.canPlacePathCard(board, targetCell, card))) {
-            throw new BusinessException(CardErrorCode.INVALID_PATH_CARD);
+            throw new BusinessException(CardErrorCode.INVALID_PLACE_CARD);
         }
 
         targetCell.setCard(card);
