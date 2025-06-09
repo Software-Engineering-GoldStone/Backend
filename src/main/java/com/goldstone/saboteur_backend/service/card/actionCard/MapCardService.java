@@ -2,15 +2,9 @@ package com.goldstone.saboteur_backend.service.card.actionCard;
 
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.board.Cell;
-import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.actionCard.MapCard;
 import com.goldstone.saboteur_backend.domain.enums.GoalCardType;
-import com.goldstone.saboteur_backend.domain.user.User;
-import com.goldstone.saboteur_backend.dtos.card.request.CellTargetCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
-import com.goldstone.saboteur_backend.exception.BusinessException;
-import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
-import com.goldstone.saboteur_backend.exception.code.error.CommonErrorCode;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

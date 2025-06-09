@@ -3,8 +3,6 @@ package com.goldstone.saboteur_backend.domain.card.actionCard;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.enums.ActionCardType;
 import com.goldstone.saboteur_backend.domain.enums.CardType;
-import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
-import com.goldstone.saboteur_backend.domain.user.User;
 import lombok.Getter;
 
 @Getter

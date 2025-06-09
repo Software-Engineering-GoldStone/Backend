@@ -31,7 +31,7 @@ public class PathValidator {
                 continue;
             }
 
-            if(toCell.isEmptyCard()){
+            if (toCell.isEmptyCard()) {
                 continue;
             }
 

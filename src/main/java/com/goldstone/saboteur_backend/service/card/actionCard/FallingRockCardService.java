@@ -6,8 +6,6 @@ import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.GoalCard;
 import com.goldstone.saboteur_backend.domain.card.StartCard;
 import com.goldstone.saboteur_backend.domain.card.actionCard.FallingRockCard;
-import com.goldstone.saboteur_backend.domain.user.User;
-import com.goldstone.saboteur_backend.dtos.card.request.CellTargetCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
 import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;

@@ -1,9 +1,7 @@
 package com.goldstone.saboteur_backend.dtos.game.request;
 
-import java.util.UUID;
-
-import com.goldstone.saboteur_backend.domain.enums.CardType;
 import com.goldstone.saboteur_backend.domain.enums.TargetToolType;
+import java.util.UUID;
 import lombok.*;
 
 @Getter

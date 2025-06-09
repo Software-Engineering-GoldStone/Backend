@@ -14,7 +14,6 @@ import com.goldstone.saboteur_backend.domain.game.GoldCardDeck;
 import com.goldstone.saboteur_backend.domain.mapping.UserGameRole;
 import com.goldstone.saboteur_backend.domain.user.User;
 import com.goldstone.saboteur_backend.domain.user.UserCardDeck;
-import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
 import com.goldstone.saboteur_backend.dtos.game.request.*;
 import com.goldstone.saboteur_backend.dtos.game.response.GetGameStateResponseDto;
 import com.goldstone.saboteur_backend.dtos.game.response.NextTurnResponseDto;
@@ -245,14 +244,13 @@ public class GameServiceImpl implements GameHandleService {
 
             boolean result = deck.useCard(card);
 
-            if(card instanceof ActionCard){
+            if (card instanceof ActionCard) {
                 actionCardService.useActionCard(gameRoom, card, dto);
             } else if (card instanceof PathCard pathCard) {
                 pathCardService.use(gameRoom, user, pathCard, dto);
-            }else{
+            } else {
                 throw new BusinessException(CardErrorCode.INVALID_CARD_ID);
             }
-
 
             // 카드 사용 후 게임 종료 체크
             GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());
@@ -271,7 +269,6 @@ public class GameServiceImpl implements GameHandleService {
             throw e;
         }
     }
-
 
     @Override
     public NextTurnResponseDto nextTurn(SocketIOClient client, NextTurnRequestDto dto)

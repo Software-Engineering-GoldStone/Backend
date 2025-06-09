@@ -3,12 +3,9 @@ package com.goldstone.saboteur_backend.service.card;
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.board.Cell;
 import com.goldstone.saboteur_backend.domain.board.PathValidator;
-import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.PathCard;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
 import com.goldstone.saboteur_backend.domain.user.User;
-import com.goldstone.saboteur_backend.dtos.card.request.PathCardRequest;
-import com.goldstone.saboteur_backend.dtos.card.request.UseCardRequest;
 import com.goldstone.saboteur_backend.dtos.card.response.UseCardResponse;
 import com.goldstone.saboteur_backend.dtos.game.request.PlayCardRequestDto;
 import com.goldstone.saboteur_backend.exception.BusinessException;
@@ -27,7 +24,8 @@ public class PathCardService {
     private final GlobalSession globalSession;
     private final BoardService boardService;
 
-    public UseCardResponse use(GameRoom gameRoom, User user, PathCard card, PlayCardRequestDto dto) {
+    public UseCardResponse use(
+            GameRoom gameRoom, User user, PathCard card, PlayCardRequestDto dto) {
         Board board = this.globalSession.getGameBoardSession(gameRoom.getId());
         if (board == null) {
             throw new BusinessException(GameRoomErrorCode.GAME_BOARD_NOT_FOUND);
@@ -44,7 +42,7 @@ public class PathCardService {
         }
 
         targetCell.setCard(card);
-        //user.getCardDeck().useCard(pathCard);
+        // user.getCardDeck().useCard(pathCard);
 
         List<Cell> reachableGoals = boardService.getReachableGoals(board);
         if (!reachableGoals.isEmpty()) {
@@ -52,6 +50,9 @@ public class PathCardService {
         }
 
         return new UseCardResponse(
-                null, null, null, String.format("(%d, %d) 위치에 길카드가 놓였습니다.", dto.getX(), dto.getY()));
+                null,
+                null,
+                null,
+                String.format("(%d, %d) 위치에 길카드가 놓였습니다.", dto.getX(), dto.getY()));
     }
 }
