@@ -55,6 +55,11 @@ public class PathValidator {
         PathType fromSide = from.getSides()[direction];
         PathType toSide = to.getSides()[opposite];
 
-        return fromSide == PathType.PATH && toSide == PathType.PATH;
+        boolean check1 = fromSide == PathType.PATH && toSide == PathType.PATH;
+        boolean check2 = fromSide == PathType.PATH && toSide == PathType.DEADEND;
+        boolean check3 = fromSide == PathType.DEADEND && toSide == PathType.DEADEND;
+        boolean check4 = fromSide == PathType.DEADEND && toSide == PathType.PATH;
+
+        return check1 || check2 || check3 || check4;
     }
 }
