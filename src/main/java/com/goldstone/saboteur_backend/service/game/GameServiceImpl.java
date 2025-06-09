@@ -4,6 +4,8 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.goldstone.saboteur_backend.domain.board.Board;
 import com.goldstone.saboteur_backend.domain.card.Card;
 import com.goldstone.saboteur_backend.domain.card.GoldCard;
+import com.goldstone.saboteur_backend.domain.card.PathCard;
+import com.goldstone.saboteur_backend.domain.card.actionCard.ActionCard;
 import com.goldstone.saboteur_backend.domain.enums.GameRole;
 import com.goldstone.saboteur_backend.domain.game.GameCardPool;
 import com.goldstone.saboteur_backend.domain.game.GameRoom;
@@ -18,9 +20,12 @@ import com.goldstone.saboteur_backend.dtos.game.response.NextTurnResponseDto;
 import com.goldstone.saboteur_backend.dtos.game.response.PlayCardResponseDto;
 import com.goldstone.saboteur_backend.dtos.game.response.SelectGoldCardResponseDto;
 import com.goldstone.saboteur_backend.exception.BusinessException;
+import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.GameRoomErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
 import com.goldstone.saboteur_backend.service.board.BoardService;
+import com.goldstone.saboteur_backend.service.card.PathCardService;
+import com.goldstone.saboteur_backend.service.card.actionCard.ActionCardService;
 import com.goldstone.saboteur_backend.service.gameRoom.GameRoomService;
 import com.goldstone.saboteur_backend.session.GlobalSession;
 import com.goldstone.saboteur_backend.socketIo.SocketIoService;
@@ -37,6 +42,9 @@ public class GameServiceImpl implements GameHandleService {
     @Autowired private final SocketIoService socketIoService;
     @Autowired private final BoardService boardService;
     @Autowired private final GameRoomService gameRoomService;
+
+    @Autowired private final ActionCardService actionCardService;
+    @Autowired private final PathCardService pathCardService;
 
     /* 게임 종료 조건: 카드풀이 비었고, 모든 플레이어의 손패가 0장일 때만 true
     // 또는 금 목적지 도달 시에도 true
@@ -235,6 +243,14 @@ public class GameServiceImpl implements GameHandleService {
                             .orElseThrow(() -> new Exception("카드를 찾을 수 없습니다."));
 
             boolean result = deck.useCard(card);
+
+            if (card instanceof ActionCard) {
+                actionCardService.useActionCard(gameRoom, card, dto);
+            } else if (card instanceof PathCard pathCard) {
+                pathCardService.use(gameRoom, user, pathCard, dto);
+            } else {
+                throw new BusinessException(CardErrorCode.INVALID_CARD_ID);
+            }
 
             // 카드 사용 후 게임 종료 체크
             GameCardPool cardPool = globalSession.getGameCardPoolSession(dto.getGameRoomId());

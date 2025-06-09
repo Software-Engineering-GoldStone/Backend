@@ -16,4 +16,9 @@ public class CellTargetCardRequest implements UseCardRequest {
     private CardType cardType;
     private int targetCellX;
     private int targetCellY;
+
+    @Override
+    public UUID getGameRoomId() {
+        return this.roomId;
+    }
 }

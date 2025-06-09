@@ -19,4 +19,9 @@ public class PathCardRequest implements UseCardRequest {
     private boolean rotated;
     private CardType cardType;
     private PathCardType pathCardType;
+
+    @Override
+    public UUID getGameRoomId() {
+        return this.roomId;
+    }
 }
