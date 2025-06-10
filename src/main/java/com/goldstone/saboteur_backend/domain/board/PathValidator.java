@@ -22,6 +22,9 @@ public class PathValidator {
         int dx[] = {0, 1, 0, -1};
         int dy[] = {1, 0, -1, 0};
 
+        // 주변에 배치된 카드가 없을 경우, 카드가 배치되는 버그를 막기위한 검증용 플래그
+        boolean runConnected = false;
+
         for (int i = 0; i < 4; i++) {
             int nx = cell.getX() + dx[i];
             int ny = cell.getY() + dy[i];
@@ -39,10 +42,12 @@ public class PathValidator {
                 cell.removeCard();
                 return false;
             }
+            runConnected = true;
         }
 
         cell.removeCard();
-        return true;
+
+        return runConnected;
     }
 
     // from: 기준 셀, to: 인접 셀
@@ -55,6 +60,12 @@ public class PathValidator {
         PathType fromSide = from.getSides()[direction];
         PathType toSide = to.getSides()[opposite];
 
-        return fromSide == PathType.PATH && toSide == PathType.PATH;
+        boolean check1 = fromSide == PathType.PATH && toSide == PathType.PATH;
+        boolean check2 = fromSide == PathType.PATH && toSide == PathType.DEADEND;
+        boolean check3 = fromSide == PathType.DEADEND && toSide == PathType.DEADEND;
+        boolean check4 = fromSide == PathType.DEADEND && toSide == PathType.PATH;
+        boolean check5 = fromSide == PathType.ROCK && toSide == PathType.ROCK;
+
+        return check1 || check2 || check3 || check4 || check5;
     }
 }

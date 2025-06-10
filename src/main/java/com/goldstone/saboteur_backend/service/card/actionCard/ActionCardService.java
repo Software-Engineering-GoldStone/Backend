@@ -11,6 +11,7 @@ import com.goldstone.saboteur_backend.exception.BusinessException;
 import com.goldstone.saboteur_backend.exception.code.error.CardErrorCode;
 import com.goldstone.saboteur_backend.exception.code.error.UserErrorCode;
 import com.goldstone.saboteur_backend.session.GlobalSession;
+import com.goldstone.saboteur_backend.socketIo.SocketIoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class ActionCardService {
     private final FallingRockCardService fallingRockCardService;
 
     private final GlobalSession globalSession;
+    private final SocketIoService socketIoService;
 
     // dto의 targetUser, targetTool, x, y는 nullable
     public UseCardResponse useActionCard(GameRoom gameRoom, Card card, PlayCardRequestDto dto) {
@@ -36,22 +38,24 @@ public class ActionCardService {
                 if (!(card instanceof BreakToolCard breakToolCard)) {
                     throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
                 }
-                User targetUser = this.globalSession.getUserSession(dto.getUserId());
+                User targetUser = this.globalSession.getUserSession(dto.getTargetUserID());
                 if (targetUser == null) {
                     throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
                 }
                 response = breakToolCardService.use(targetUser, breakToolCard);
+                this.socketIoService.sendBroadCast(gameRoom.getId(), "destroyTool", response);
             }
             case REPAIR -> {
                 if (!(card instanceof RepairToolCard repairToolCard)) {
                     throw new BusinessException(CardErrorCode.INVALID_ACTION_CARD);
                 }
-                User targetUser = this.globalSession.getUserSession(dto.getUserId());
+                User targetUser = this.globalSession.getUserSession(dto.getTargetUserID());
                 if (targetUser == null) {
                     throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
                 }
                 response =
                         repairToolCardService.use(targetUser, repairToolCard, dto.getTargetTool());
+                this.socketIoService.sendBroadCast(gameRoom.getId(), "repairTool", response);
             }
             case MAP -> {
                 if (!(card instanceof MapCard mapCard)) {

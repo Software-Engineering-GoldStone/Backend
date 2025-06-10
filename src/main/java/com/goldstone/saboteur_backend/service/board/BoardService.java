@@ -20,13 +20,13 @@ public class BoardService {
         List<Cell> result = new ArrayList<>();
 
         int size = board.getSize();
-        boolean[][] visited = new boolean[size + 1][size + 1];
+        Set<Cell> visited = new HashSet<>();
 
         Queue<Cell> queue = new LinkedList<>();
         Cell startCell = board.getCellFromXAndY(0, Board.DEFAULT_HEIGHT / 2);
 
         queue.add(startCell);
-        visited[startCell.getX()][startCell.getY()] = true;
+        visited.add(startCell);
 
         while (!queue.isEmpty()) {
             Cell currentCell = queue.poll();
@@ -53,9 +53,9 @@ public class BoardService {
                 }
 
                 if (!board.isConnected(currentCell, nextCell)) continue;
-                if (visited[nx][ny]) continue;
+                if (visited.contains(new Cell(nx, ny))) continue;
 
-                visited[nx][ny] = true;
+                visited.add(new Cell(nx, ny));
                 queue.add(nextCell);
             }
         }

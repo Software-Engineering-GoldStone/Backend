@@ -26,6 +26,10 @@ public class PathCardService {
 
     public UseCardResponse use(
             GameRoom gameRoom, User user, PathCard card, PlayCardRequestDto dto) {
+        if (!user.canPlacePlathCard()) {
+            throw new BusinessException(CardErrorCode.CANNOT_PLACE_CARD_BY_TOOL_BROKEN);
+        }
+
         Board board = this.globalSession.getGameBoardSession(gameRoom.getId());
         if (board == null) {
             throw new BusinessException(GameRoomErrorCode.GAME_BOARD_NOT_FOUND);
@@ -38,7 +42,7 @@ public class PathCardService {
         }
 
         if (!(PathValidator.canPlacePathCard(board, targetCell, card))) {
-            throw new BusinessException(CardErrorCode.INVALID_PATH_CARD);
+            throw new BusinessException(CardErrorCode.INVALID_PLACE_CARD);
         }
 
         targetCell.setCard(card);

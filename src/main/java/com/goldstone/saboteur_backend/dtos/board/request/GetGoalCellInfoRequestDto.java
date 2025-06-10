@@ -1,4 +1,4 @@
-package com.goldstone.saboteur_backend.dtos.gameRoom.request;
+package com.goldstone.saboteur_backend.dtos.board.request;
 
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -10,6 +10,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CreateGameRoomRequestDto {
-    private UUID userId;
+public class GetGoalCellInfoRequestDto {
+    private UUID gameRoomId;
 }
