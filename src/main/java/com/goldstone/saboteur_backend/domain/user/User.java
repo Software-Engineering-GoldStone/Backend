@@ -82,6 +82,15 @@ public class User extends BaseEntity {
         }
     }
 
+    public boolean canPlacePlathCard() {
+        for (PlayerToolStatus status : toolStatusMap.values()) {
+            if (status.equals(PlayerToolStatus.BROKEN)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         return "User{id=" + id + ", nickname='" + nickname + "'}";
