@@ -64,7 +64,8 @@ public class PathValidator {
         boolean check2 = fromSide == PathType.PATH && toSide == PathType.DEADEND;
         boolean check3 = fromSide == PathType.DEADEND && toSide == PathType.DEADEND;
         boolean check4 = fromSide == PathType.DEADEND && toSide == PathType.PATH;
+        boolean check5 = fromSide == PathType.ROCK && toSide == PathType.ROCK;
 
-        return check1 || check2 || check3 || check4;
+        return check1 || check2 || check3 || check4 || check5;
     }
 }
