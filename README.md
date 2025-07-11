@@ -11,9 +11,9 @@
 
 ## 기술 스택
 
-- Java 17 / Spring Boot 3 / JPA / MySQL
-- WebSocket (Socket.IO)
-- Gradle, Git
+- Java 17 / Spring Boot 3
+- Netty Socket.IO
+- Gradle
 
 ## 아키텍쳐 구조
 <img width="707" alt="소프트웨어인터페이스" src="https://github.com/user-attachments/assets/554c5f9d-3c5d-40ad-b235-06b5d76da0d3" />
